@@ -1,0 +1,15 @@
+.nav-link-custom:hover {
+    color: #6c63ff !important;
+    text-decoration: underline;
+  }
+  
+  .resume-btn {
+    transition: all 0.3s ease;
+  }
+  
+  .resume-btn:hover {
+    background-color: #6c63ff;
+    color: white;
+    border: none;
+  }
+  

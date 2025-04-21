@@ -1,0 +1,22 @@
+.playlist-wrapper {
+    padding-top: 20px;
+    padding-bottom: 50px;
+  }
+  
+  .custom-card {
+    transition: transform 0.3s ease-in-out;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .custom-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
+  
+  .project-img {
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #eee;
+  }
+  
