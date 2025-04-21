@@ -1,7 +1,7 @@
+// models/messageSchema.js
 const mongoose = require('mongoose');
-const validate = require('validator');
 
-const userSchema = new mongoose.Schema({
+const messageSchema = new mongoose.Schema({
     fname: {
         type: String,
         required: true,
@@ -16,19 +16,22 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        validate(value) {
-            if (!validate.isEmail(value)) {
-                throw new Error("Invalid Email");
-            }
-        },
-        
     },
     mobile: {
         type: String,
         required: true,
         trim: true,
+    },
+    message: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    date: {
+        type: Date,
+        default: Date.now,
     }
 });
 
-const User = mongoose.model("User", userSchema);
-module.exports = User;
+const Message = mongoose.model("Message", messageSchema);
+module.exports = Message;

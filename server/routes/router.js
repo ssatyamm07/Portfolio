@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const users = require('../models/userSchema');
+const users = require('../models/userSchema'); // User model for storing user data
+const Message = require('../models/messageSchema'); // Message model for storing messages
 const nodemailer = require('nodemailer');
 
-// transporter config
+// transporter config for sending emails
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -12,21 +13,26 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// POST /register
+// POST /register route
 router.post('/register', async (req, res) => {
     const { fname, lname, email, mobile, message } = req.body;
     console.log("Incoming request:", req.body);
 
+    // Check for missing fields
     if (!fname || !lname || !email || !mobile || !message) {
         return res.status(422).json({ error: "Please fill all fields" });
     }
 
     try {
-        // Save to DB
-        const newUser = new users({ fname, lname, email, mobile, message });
-        await newUser.save();
+        // Save to the messages collection
+        const newMessage = new Message({ fname, lname, email, mobile, message });
+        await newMessage.save();
 
-        // Admin Email (To You)
+        // Optionally, you can also save the user data to the users collection, if needed
+        // const newUser = new users({ fname, lname, email, mobile });
+        // await newUser.save();
+
+        // Admin Email (Notification to You)
         const adminMailOptions = {
             from: process.env.EMAIL,
             to: process.env.EMAIL,
