@@ -8,7 +8,7 @@ const port = process.env.PORT
 
 app.use(express.json());
 app.use(cors({
-    origin: 'https://portfolio-l7sezuv9o-satyam-kumars-projects-76738dbb.vercel.app/',
+    origin: 'https://portfolio-updated-eta.vercel.app',
     methods: ['GET', 'POST'],
     credentials: true,
 }));
