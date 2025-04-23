@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Button from "react-bootstrap/Button";
-import Typical from "react-typical";
+//import Typical from "react-typical";
+import { TypeAnimation } from "react-type-animation";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import "./Home.css";
@@ -14,7 +15,6 @@ const Home = () => {
     <>
       <div className="container home_container py-5">
         <div className="home_innerdiv d-flex flex-column flex-md-row align-items-center justify-content-between gap-4">
-          
           {/* Left Content */}
           <div className="left_div" data-aos="fade-right">
             <h2 className="mb-3">
@@ -22,7 +22,7 @@ const Home = () => {
             </h2>
 
             {/* Typing Animation */}
-            <h4 className="typing-text mb-3">
+            {/* <h4 className="typing-text mb-3">
               <Typical
                 steps={[
                   "MERN Stack Developer 💻", 2000,
@@ -32,10 +32,32 @@ const Home = () => {
                 loop={Infinity}
                 wrapper="span"
               />
+            </h4> */}
+            <h4 className="typing-text mb-3">
+              <TypeAnimation
+                sequence={[
+                  "MERN Stack Developer 💻",
+                  2000,
+                  "Backend Specialist 🔧",
+                  2000,
+                  "Tech Explorer 🚀",
+                  2000,
+                ]}
+                speed={50}
+                repeat={Infinity}
+                wrapper="span"
+              />
             </h4>
-
-            <p style={{ color: "#666", letterSpacing: ".5px", maxWidth: "600px" }}>
-              I create full-stack web apps using React, Node, and MongoDB. I'm passionate about building scalable backends, writing clean code, and creating meaningful digital solutions.
+            <p
+              style={{
+                color: "#666",
+                letterSpacing: ".5px",
+                maxWidth: "600px",
+              }}
+            >
+              I create full-stack web apps using React, Node, and MongoDB. I'm
+              passionate about building scalable backends, writing clean code,
+              and creating meaningful digital solutions.
             </p>
 
             {/* Skills List */}
@@ -47,35 +69,38 @@ const Home = () => {
             </ul>
 
             {/* Buttons */}
-            
-<div className="btn_div mt-4 d-flex gap-3">
-  {/* Download Resume Button */}
-  <Button
-    className="custom-btn-dark"
-    as="a"
-    href="/Satyam_Resume.pdf" 
-    download="Satyam_Kumar_Resume.pdf"  // Added the download attribute
-    target="_blank"
-  >
-    Download Resume
-  </Button>
 
-  {/* Let's Connect Button */}
-  <Button
-    className="custom-btn-purple"
-    as="a"
-    href="https://www.linkedin.com/in/satyam-kumar-426b13226/" 
-    target="_blank"
-  >
-    Let's Connect
-  </Button>
-</div>
+            <div className="btn_div mt-4 d-flex gap-3">
+              {/* Download Resume Button */}
+              <Button
+                className="custom-btn-dark"
+                as="a"
+                href="/Satyam_Resume.pdf"
+                download="Satyam_Kumar_Resume.pdf" // Added the download attribute
+                target="_blank"
+              >
+                Download Resume
+              </Button>
 
+              {/* Let's Connect Button */}
+              <Button
+                className="custom-btn-purple"
+                as="a"
+                href="https://www.linkedin.com/in/satyam-kumar-426b13226/"
+                target="_blank"
+              >
+                Let's Connect
+              </Button>
+            </div>
           </div>
 
           {/* Right Content */}
           <div className="right_div" data-aos="zoom-in">
-            <img src="undraw_programmer_raqr.png" alt="developer" className="home_img img-fluid" />
+            <img
+              src="undraw_programmer_raqr.png"
+              alt="developer"
+              className="home_img img-fluid"
+            />
           </div>
         </div>
       </div>

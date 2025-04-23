@@ -8,7 +8,7 @@ const port = process.env.PORT
 
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'https://portfolio-l7sezuv9o-satyam-kumars-projects-76738dbb.vercel.app/',
     methods: ['GET', 'POST'],
     credentials: true,
 }));
