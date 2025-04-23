@@ -41,7 +41,7 @@ const Contact = () => {
     }
 
     try {
-        const res = await axios.post("https://portfolio-1-n7cc.onrender.com/register", {
+        const res = await axios.post("https://portfolio-2-n66c.onrender.com/register", {
           fname,
           lname,
           email,
