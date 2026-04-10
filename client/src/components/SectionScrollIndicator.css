@@ -1,0 +1,40 @@
+.scroll-indicator {
+  position: fixed;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  height: min(45vh, 320px);
+  pointer-events: none;
+}
+
+.scroll-indicator__track {
+  width: 0;
+  height: 100%;
+  border-left: 2px dashed rgba(255, 255, 255, 0.35);
+  position: relative;
+}
+
+.scroll-indicator__fill {
+  position: absolute;
+  left: -2px;
+  top: 0;
+  width: 2px;
+  background: var(--color-primary);
+  border-radius: 2px;
+  box-shadow: 0 0 14px rgba(252, 128, 25, 0.65);
+  transition: height 0.12s ease-out;
+}
+
+@media (max-width: 768px) {
+  .scroll-indicator {
+    right: 10px;
+    height: min(35vh, 220px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-indicator__fill {
+    transition: none;
+  }
+}

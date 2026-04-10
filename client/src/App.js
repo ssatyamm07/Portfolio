@@ -6,22 +6,39 @@ import About from './components/About.js';
 import Contact from './components/Contact.js';
 import Playlist from './components/Playlist.js';
 import Footer from './components/Footer.js';
-import {Routes, Route} from 'react-router-dom';
+import QuickCart from './components/QuickCart.js';
+import HashScroll from './HashScroll.js';
+import SectionScrollIndicator from './components/SectionScrollIndicator.js';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
+
+function AppRoutes() {
+  const { pathname } = useLocation();
+  const isHome = pathname === '/';
+
+  return (
+ <>
+      {!isHome && <Header />}
+      {isHome && <SectionScrollIndicator />}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/playlist" element={<Playlist />} />
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
+    </>
+  );
+}
+
 function App() {
   return (
-   <>
-   <Header />
-   <Routes>
-      <Route path='/' element={<Home />} />
-      <Route path='/about' element={<About />} />
-      <Route path='/playlist' element={<Playlist />} />
-      <Route path='/contact' element={<Contact />} />
-      
-   </Routes>
-   <ScrollToTop />
-   <Footer /> 
-   </>
+    <>
+      <HashScroll />
+      <AppRoutes />
+      <ScrollToTop />
+      <QuickCart />
+      <Footer />
+    </>
   );
 }
 

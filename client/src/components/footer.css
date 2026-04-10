@@ -1,42 +1,74 @@
 .footer {
-    background-color: #1f1f1f;
-    color: #fff;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-  }
-  
-  .footer_section {
-    max-width: 300px;
-  }
-  
-  .footer_title {
-    font-weight: bold;
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-  }
-  
-  .social_icons i {
-    font-size: 1.5rem;
-    color: #fff;
-    transition: color 0.3s ease;
-  }
-  
-  .social_icons i:hover {
-    color: #fca311;
-  }
-  
-  .footer_link {
-    color: #ccc;
-    text-decoration: none;
-    transition: all 0.3s ease;
-  }
-  
-  .footer_link:hover {
-    color: #fca311;
-    text-decoration: underline;
-  }
-  
-  .footer p {
-    margin-bottom: 0.5rem;
-  }
-  
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-2xl) var(--space-lg);
+  padding-bottom: calc(var(--space-2xl) + 100px + env(safe-area-inset-bottom));
+  margin-top: var(--space-2xl);
+}
+
+.footer__container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-xl);
+}
+
+.footer__section {
+  min-width: 200px;
+}
+
+.footer__title {
+  margin: 0 0 var(--space-md);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.footer__muted {
+  margin: 0 0 var(--space-sm);
+  color: var(--color-text-subtle);
+  font-size: 0.9rem;
+}
+
+.footer__line {
+  margin: 0 0 var(--space-sm);
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.footer__line i {
+  color: var(--color-primary);
+  width: 1.1rem;
+}
+
+.footer__socials {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.footer__socials a {
+  color: var(--color-text-muted);
+  font-size: 1.35rem;
+  transition: color 0.2s ease;
+}
+
+.footer__socials a:hover {
+  color: var(--color-primary);
+}
+
+.footer__link {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.footer__link:hover {
+  color: var(--color-primary);
+}

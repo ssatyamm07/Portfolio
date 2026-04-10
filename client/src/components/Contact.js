@@ -73,7 +73,7 @@ const Contact = () => {
   return (
     <>
       <div className="container mb-5 contact" data-aos="fade-up">
-        <h2 className="text-center mb-4">📬 Contact Us</h2>
+        <h2 className="text-center mb-4">Contact</h2>
         <div className="container">
           <Form className="row" onSubmit={handleSubmit}>
             <Form.Group className="mb-3 col-lg-6">

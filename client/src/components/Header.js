@@ -1,61 +1,53 @@
 import React from "react";
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import Button from "react-bootstrap/Button";
-import { NavLink } from "react-router-dom";
-import "./Header.css"; // Optional if you want custom styles
+import { NavLink, useLocation } from "react-router-dom";
+import "./Header.css";
+
+const RESUME_PATH = "/Satyam_Resume.pdf";
 
 const Header = () => {
-  const linkStyle = {
-    marginRight: "15px",
-    fontSize: "17px",
-    letterSpacing: ".5px",
-    color: "#333",
-    transition: "color 0.3s ease",
-  };
+  const { pathname } = useLocation();
+  const isHome = pathname === "/";
 
-  const handleResumeDownload = () => {
-    window.open("/Satyam_Resume.pdf", "_blank"); 
-  };
+  const journeyHref = isHome ? "#journey" : "/#journey";
+  const projectsHref = isHome ? "#projects" : "/#projects";
+  const contactHref = isHome ? "#contact" : "/contact";
 
   return (
-    <>
-      <Navbar bg="light" expand="lg" className="shadow-sm">
-        <Container>
-          <Navbar.Brand href="/" style={{ color: "#6c63ff", fontWeight: "bold" }}>
-            <h3 className="m-0">Satyam Kumar</h3>
-          </Navbar.Brand>
+    <header className="site-header">
+      <div className="site-header__inner">
+        <NavLink to="/" className="site-header__brand" end>
+          <span className="site-header__brand-name">Satyam Kumar</span>
+          <span className="site-header__brand-role">Engineer · B2B automation</span>
+        </NavLink>
 
-          <Navbar.Toggle aria-controls="navbar-nav" />
-
-          <Navbar.Collapse id="navbar-nav">
-            <Nav className="ms-auto d-flex align-items-center gap-3">
-              {["/", "/About", "/playlist", "/Contact"].map((path, idx) => {
-                const names = ["Home", "About", "Playlist", "Contact"];
-                return (
-                  <NavLink
-                    key={path}
-                    to={path}
-                    className="text-decoration-none nav-link-custom"
-                    style={({ isActive }) => ({
-                      ...linkStyle,
-                      color: isActive ? "#6c63ff" : "#333",
-                    })}
-                  >
-                    {names[idx]}
-                  </NavLink>
-                );
-              })}
-
-              <Button variant="outline-primary" className="resume-btn" onClick={handleResumeDownload}>
-                Resume
-              </Button>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-    </>
+        <nav className="site-header__nav" aria-label="Main">
+          <NavLink to="/" className="site-header__link" end>
+            Home
+          </NavLink>
+          <a href={journeyHref} className="site-header__link site-header__link--anchor">
+            Journey
+          </a>
+          <a href={projectsHref} className="site-header__link site-header__link--anchor">
+            Projects
+          </a>
+          <NavLink to="/about" className="site-header__link">
+            About
+          </NavLink>
+          <a href={contactHref} className="site-header__link site-header__link--anchor">
+            Contact
+          </a>
+          <a
+            className="site-header__cta"
+            href={RESUME_PATH}
+            download="Satyam_Kumar_Resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Resume
+          </a>
+        </nav>
+      </div>
+    </header>
   );
 };
 

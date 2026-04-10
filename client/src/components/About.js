@@ -1,42 +1,102 @@
-import React from 'react';
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import "./About.css";
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import { useEffect } from 'react';
+import { summary, experience, education, certifications, skills } from "../content/profile";
 
 const About = () => {
   useEffect(() => {
-    AOS.init({ duration: 1000 });
+    AOS.init({ duration: 800, once: true });
   }, []);
 
   return (
-    <>
-      <div className="container mb-5 about_container" style={{ minHeight: "100%" }}>
-        <div className="main_container d-flex justify-content-around flex-wrap align-items-center">
-          {/* Left Text */}
-          <div className="left_container mt-5" style={{ maxWidth: 550 }} data-aos="fade-right">
-            <h2 className="mb-3">Meet <span style={{ color: "#6c63ff" }}>Satyam Kumar</span></h2>
-            <p style={{ color: "#555", lineHeight: "1.8", fontSize: "17px" }}>
-              I’m a passionate <strong>MERN Stack Developer</strong> specializing in backend development. With a love for building scalable APIs and clean architectures, I enjoy turning complex problems into elegant technical solutions.
-              <br /><br />
-              I’m always exploring new technologies and love to stay updated with modern practices. Whether it’s crafting RESTful APIs, working with databases, or diving into DevOps – I love the entire process of bringing ideas to life through code.
-              <br /><br />
-              Outside coding, I enjoy exploring tech trends, working on side projects, and helping others grow in tech.
-            </p>
-          </div>
+    <main className="about-page">
+      <div className="about-page__inner">
+        <header className="about-page__header" data-aos="fade-up">
+          <h1>About</h1>
+          <p className="about-page__intro">{summary.short}</p>
+        </header>
 
-          {/* Right Image */}
-          <div className="right_container mt-4" data-aos="fade-left">
-            <img
-              src="/ChatGPT Image Apr 1, 2025, 12_59_55 PM.png"
-              alt="about-logo"
-              className="about_img"
-              style={{ maxWidth: "100%", height: "auto", borderRadius: "10px" }}
-            />
+        <section className="about-page__section" data-aos="fade-up">
+          <h2>Background</h2>
+          {summary.longParagraphs.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </section>
+
+        <section className="about-page__section" data-aos="fade-up">
+          <h2>Experience</h2>
+          <ul className="about-page__timeline">
+            {experience
+              .filter((job) => job.kind !== "education")
+              .map((job) => (
+              <li key={job.id} className="about-page__job">
+                <div className="about-page__job-head">
+                  <h3>{job.title}</h3>
+                  <span className="about-page__job-meta">
+                    {job.org} · {job.range}
+                  </span>
+                </div>
+                <ul>
+                  {job.highlights.map((h) => (
+                    <li key={h}>{h}</li>
+                  ))}
+                </ul>
+              </li>
+              ))}
+          </ul>
+        </section>
+
+        <section className="about-page__grid" data-aos="fade-up">
+          <div>
+            <h2>Skills</h2>
+            <dl className="about-page__skills">
+              <dt>Languages &amp; frameworks</dt>
+              <dd>{skills.languages.join(", ")}</dd>
+              <dt>Frontend</dt>
+              <dd>{skills.frontend.join(", ")}</dd>
+              <dt>Data</dt>
+              <dd>{skills.data.join(", ")}</dd>
+              <dt>Cloud &amp; tools</dt>
+              <dd>{skills.cloud.join(", ")}</dd>
+              <dt>Practices</dt>
+              <dd>{skills.practices.join(", ")}</dd>
+            </dl>
           </div>
-        </div>
+          <div>
+            <h2>Education</h2>
+            <ul className="about-page__edu">
+              {education.map((e) => (
+                <li key={e.title}>
+                  <strong>{e.title}</strong>
+                  <span>{e.place}</span>
+                  <span>
+                    {e.range} · {e.note}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <h2 className="about-page__certs-title">Certifications</h2>
+            <ul className="about-page__certs">
+              {certifications.map((c) => (
+                <li key={c}>{c}</li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <p className="about-page__cta">
+          <Link to="/contact" className="about-page__cta-link">
+            Get in touch
+          </Link>
+          {" · "}
+          <Link to="/" className="about-page__cta-link">
+            Back to home
+          </Link>
+        </p>
       </div>
-    </>
+    </main>
   );
 };
 

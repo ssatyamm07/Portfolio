@@ -1,48 +1,59 @@
-import React from 'react';
-import './footer.css';
+import React from "react";
+import { Link } from "react-router-dom";
+import "./footer.css";
+import { social } from "../content/profile";
+
+const RESUME_PATH = "/Satyam_Resume.pdf";
 
 const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="footer text-white py-5">
-      <div className="container footer_container d-flex justify-content-between flex-wrap">
-        
-        {/* Branding + Socials */}
-        <div className="footer_section mb-4">
-          <h4 className="footer_title">Satyam Kumar</h4>
-          <p className="mb-2">© {year} All rights reserved</p>
-          <div className="social_icons d-flex align-items-center">
-            
-            <a href="" target="_blank" rel="noopener noreferrer" className="me-3">
-              <i className="fa-brands fa-instagram"></i>
+    <footer className="footer">
+      <div className="footer__container">
+        <div className="footer__section">
+          <h4 className="footer__title">Satyam Kumar</h4>
+          <p className="footer__muted">© {year} All rights reserved</p>
+          <div className="footer__socials">
+            <a href={social.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+              <i className="fa-brands fa-github" />
             </a>
-            <a href="" target="_blank" rel="noopener noreferrer" className="me-3">
-              <i className="fa-brands fa-facebook"></i>
-            </a>
-            <a href="https://github.com/ssatyamm07" target="_blank" rel="noopener noreferrer" className="me-3">
-              <i className="fa-brands fa-github"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/satyam-kumar-426b13226/" target="_blank" rel="noopener noreferrer">
-              <i className="fa-brands fa-linkedin"></i>
+            <a href={social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+              <i className="fa-brands fa-linkedin" />
             </a>
           </div>
         </div>
 
-        {/* Contact Info */}
-        <div className="footer_section mb-4">
-          <h4 className="footer_title">Contact</h4>
-          <p className="mb-1"><i className="fa-solid fa-envelope me-2"></i>satyamraj151.rajgir@gmail.com</p>
-          <p className="mb-1"><i className="fa-solid fa-phone me-2"></i>+91 8340429200</p>
-          <p><i className="fa-solid fa-location-dot me-2"></i>Vadodara, Gujarat, India</p>
+        <div className="footer__section">
+          <h4 className="footer__title">Contact</h4>
+          <p className="footer__line">
+            <i className="fa-solid fa-envelope" aria-hidden /> {social.email}
+          </p>
+          <p className="footer__line">
+            <i className="fa-solid fa-phone" aria-hidden /> {social.phoneDisplay}
+          </p>
+          <p className="footer__line">
+            <i className="fa-solid fa-location-dot" aria-hidden /> {social.location}
+          </p>
         </div>
 
-        {/* Useful Links */}
-        <div className="footer_section mb-4">
-          <h4 className="footer_title">Quick Links</h4>
-          <p><a href="/Satyam_Resume.pdf" className="footer_link">Download Resume</a></p>
-          <p><a href="./playlist" className="footer_link">Projects</a></p>
-          <p><a href="/contact" className="footer_link">Hire Me</a></p>
+        <div className="footer__section">
+          <h4 className="footer__title">Quick links</h4>
+          <p>
+            <a href={RESUME_PATH} className="footer__link" download="Satyam_Kumar_Resume.pdf">
+              Download resume
+            </a>
+          </p>
+          <p>
+            <Link to="/playlist" className="footer__link">
+              All projects
+            </Link>
+          </p>
+          <p>
+            <Link to="/contact" className="footer__link">
+              Hire me
+            </Link>
+          </p>
         </div>
       </div>
     </footer>
