@@ -1,7 +1,9 @@
 .skills-showcase {
   position: relative;
-  padding: var(--space-3xl) var(--space-lg);
+  padding: calc(var(--space-3xl) + var(--space-lg)) var(--space-lg) var(--space-3xl);
+  margin-top: var(--space-md);
   overflow: hidden;
+  scroll-margin-top: var(--header-height);
 }
 
 .skills-showcase__stripes {

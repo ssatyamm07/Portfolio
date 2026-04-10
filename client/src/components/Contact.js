@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import "./Contact.css";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import Spinner from "react-bootstrap/Spinner";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import axios from "axios";
-// Optional: Toast for notifications
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { getRegisterUrl } from "../utils/contactApi";
 
 const Contact = () => {
   const [inputValue, setInputValue] = useState({
@@ -17,6 +18,7 @@ const Contact = () => {
     mobile: "",
     message: "",
   });
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     AOS.init({ duration: 1000 });
@@ -26,13 +28,12 @@ const Contact = () => {
     const { name, value } = e.target;
     setInputValue((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    //setSubmitting(true);
     const { fname, lname, email, mobile, message } = inputValue;
 
     if (!fname || !lname || !email || !mobile || !message) {
@@ -40,35 +41,61 @@ const Contact = () => {
       return;
     }
 
+    setSending(true);
     try {
-        const res = await axios.post("https://portfolio-final-11s4.onrender.com/register", {
-          fname,
-          lname,
-          email,
-          mobile,
-          message,
-        });
-      
-        const data = res.data;
-      
-        if (res.status === 201) {
-          toast.success("Message sent successfully!");
-          console.log("Form submitted:", data);
-          setInputValue({
-            fname: "",
-            lname: "",
-            email: "",
-            mobile: "",
-            message: "",
-          });
+      const res = await axios.post(
+        getRegisterUrl(),
+        { fname, lname, email, mobile, message },
+        { timeout: 60000, headers: { "Content-Type": "application/json" } }
+      );
+
+      if (res.status === 201) {
+        if (res.data?.emailSent === false) {
+          toast.warning(
+            "Your message is saved — I'll still get it. (Email alerts aren't set up on the server yet.)",
+            { autoClose: 6000 }
+          );
         } else {
-          toast.error("Message not sent!");
+          toast.success("Cheers — got your message! I'll reply as soon as I can.", {
+            autoClose: 5000,
+          });
         }
-      } catch (error) {
-        console.error("Error sending message:", error);
-        toast.error("An error occurred!");
+        setInputValue({
+          fname: "",
+          lname: "",
+          email: "",
+          mobile: "",
+          message: "",
+        });
       }
-    }      
+    } catch (error) {
+      const status = error.response?.status;
+      const data = error.response?.data;
+
+      if (status === 502 && data?.saved) {
+        toast.warning(
+          "Your message is saved — I'll still see it. Email delivery had a hiccup; I'll reply when I can.",
+          { autoClose: 6000 }
+        );
+        setInputValue({
+          fname: "",
+          lname: "",
+          email: "",
+          mobile: "",
+          message: "",
+        });
+      } else if (status === 422) {
+        toast.error(data?.error || "Please fill all fields.");
+      } else if (error.code === "ECONNABORTED") {
+        toast.error("Request timed out. The server may be waking up — try again in a moment.");
+      } else {
+        console.error("Error sending message:", error);
+        toast.error(data?.error || error.message || "An error occurred.");
+      }
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <>
@@ -76,6 +103,28 @@ const Contact = () => {
         <h2 className="text-center mb-4">Contact</h2>
         <div className="container">
           <Form className="row" onSubmit={handleSubmit}>
+            {sending ? (
+              <div
+                className="contact__sending col-12 mb-3"
+                role="status"
+                aria-live="polite"
+                aria-busy="true"
+              >
+                <div className="contact__sending-inner">
+                  <Spinner
+                    animation="border"
+                    role="presentation"
+                    className="contact__spinner"
+                    aria-hidden="true"
+                  />
+                  <div className="contact__sending-text">
+                    <span className="contact__sending-title">Sending your message</span>
+                    <span className="contact__sending-sub">Hang tight — just a moment.</span>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
             <Form.Group className="mb-3 col-lg-6">
               <Form.Label>First Name</Form.Label>
               <Form.Control
@@ -84,6 +133,7 @@ const Contact = () => {
                 value={inputValue.fname}
                 onChange={getValue}
                 placeholder="Enter your first name"
+                disabled={sending}
               />
             </Form.Group>
 
@@ -95,6 +145,7 @@ const Contact = () => {
                 value={inputValue.lname}
                 onChange={getValue}
                 placeholder="Enter your last name"
+                disabled={sending}
               />
             </Form.Group>
 
@@ -106,6 +157,7 @@ const Contact = () => {
                 value={inputValue.email}
                 onChange={getValue}
                 placeholder="example@example.com"
+                disabled={sending}
               />
             </Form.Group>
 
@@ -117,11 +169,12 @@ const Contact = () => {
                 value={inputValue.mobile}
                 onChange={getValue}
                 placeholder="Enter your mobile number"
+                disabled={sending}
               />
             </Form.Group>
 
             <Form.Group className="mb-4 col-12">
-              <Form.Label>message</Form.Label>
+              <Form.Label>Message</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={4}
@@ -129,17 +182,18 @@ const Contact = () => {
                 value={inputValue.message}
                 onChange={getValue}
                 placeholder="Write your message here"
+                disabled={sending}
               />
             </Form.Group>
 
             <div className="d-flex justify-content-center">
-              <Button variant="primary" className="col-lg-6" type="submit">
-                Submit
+              <Button variant="primary" className="col-lg-6" type="submit" disabled={sending}>
+                {sending ? "Sending…" : "Submit"}
               </Button>
             </div>
           </Form>
         </div>
-        <ToastContainer />
+        <ToastContainer position="top-center" closeOnClick pauseOnHover />
       </div>
     </>
   );

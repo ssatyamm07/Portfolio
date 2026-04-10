@@ -1,73 +1,173 @@
 const express = require('express');
 const router = express.Router();
-const users = require('../models/userSchema'); // User model for storing user data
-const Message = require('../models/messageSchema'); // Message model for storing messages
+const mongoose = require('mongoose');
+const Message = require('../models/messageSchema');
 const nodemailer = require('nodemailer');
 
-// transporter config for sending emails
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASS
+/**
+ * Mail is optional. If creds are missing, contact form still saves to MongoDB and returns 201.
+ * Supports EMAIL + EMAIL_PASS or MAIL_USER + MAIL_PASS.
+ * Gmail App Passwords are often shown as "xxxx xxxx xxxx xxxx"; spaces are stripped for SMTP.
+ */
+function normalizeAppPassword(raw) {
+    if (raw == null) return '';
+    return String(raw).replace(/\s+/g, '').trim();
+}
+
+function getMailCredentials() {
+    const user = (process.env.EMAIL || process.env.MAIL_USER || '').trim();
+    const pass = normalizeAppPassword(process.env.EMAIL_PASS || process.env.MAIL_PASS);
+    if (!user || !pass) return null;
+    return { user, pass };
+}
+
+function createMailTransport() {
+    const creds = getMailCredentials();
+    if (!creds) {
+        console.warn(
+            '[mail] No mail env (set EMAIL + EMAIL_PASS, or MAIL_USER + MAIL_PASS) — saving to DB only.'
+        );
+        return null;
     }
-});
+
+    return nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user: creds.user, pass: creds.pass },
+        connectionTimeout: 15000,
+        greetingTimeout: 15000,
+        socketTimeout: 25000,
+    });
+}
+
+function sendMailWithTimeout(transporter, mailOptions, label, ms = 22000) {
+    return Promise.race([
+        transporter.sendMail(mailOptions),
+        new Promise((_, reject) =>
+            setTimeout(() => reject(new Error(`${label}: send timed out after ${ms}ms`)), ms)
+        ),
+    ]);
+}
+
+function saveMessageWithTimeout(doc, ms = 20000) {
+    return Promise.race([
+        doc.save(),
+        new Promise((_, reject) =>
+            setTimeout(() => reject(new Error(`MongoDB save timed out after ${ms}ms`)), ms)
+        ),
+    ]);
+}
 
 // POST /register route
 router.post('/register', async (req, res) => {
-    const { fname, lname, email, mobile, message } = req.body;
-    console.log("Incoming request:", req.body);
-
-    // Check for missing fields
-    if (!fname || !lname || !email || !mobile || !message) {
-        return res.status(422).json({ error: "Please fill all fields" });
-    }
-
     try {
-        // Save to the messages collection
-        const newMessage = new Message({ fname, lname, email, mobile, message });
-        await newMessage.save();
+        const { fname, lname, email, mobile, message } = req.body || {};
+        console.log('[register] incoming:', { fname, lname, email, mobile, messageLen: message?.length });
 
-        // Optionally, you can also save the user data to the users collection, if needed
-        // const newUser = new users({ fname, lname, email, mobile });
-        // await newUser.save();
+        if (!fname || !lname || !email || !mobile || !message) {
+            return res.status(422).json({ error: 'Please fill all fields' });
+        }
 
-        // Admin Email (Notification to You)
+        if (mongoose.connection.readyState !== 1) {
+            console.error('[register] MongoDB not connected, readyState=', mongoose.connection.readyState);
+            return res.status(503).json({
+                error: 'Database is not ready. Try again in a few seconds.',
+                saved: false,
+            });
+        }
+
+        let newMessage;
+        try {
+            newMessage = new Message({ fname, lname, email, mobile, message });
+            await saveMessageWithTimeout(newMessage);
+            console.log('[register] saved to MongoDB, id:', newMessage._id);
+        } catch (err) {
+            console.error('[register] MongoDB save error:', err.message);
+            return res.status(500).json({ error: 'Could not save message. Check DATABASE / MongoDB.' });
+        }
+
+        const transporter = createMailTransport();
+        if (!transporter) {
+            return res.status(201).json({
+                message:
+                    'Message saved. Email is not configured on the server (optional: EMAIL + EMAIL_PASS).',
+                emailSent: false,
+                saved: true,
+            });
+        }
+
+        const fromAddr = getMailCredentials().user;
         const adminMailOptions = {
-            from: process.env.EMAIL,
-            to: process.env.EMAIL,
-            subject: "New Contact Form Submission",
+            from: fromAddr,
+            to: fromAddr,
+            subject: 'New Contact Form Submission',
             html: `
                 <h3>Contact Form Submission</h3>
                 <p><strong>Name:</strong> ${fname} ${lname}</p>
                 <p><strong>Email:</strong> ${email}</p>
                 <p><strong>Mobile:</strong> ${mobile}</p>
                 <p><strong>Message:</strong> ${message}</p>
-            `
+            `,
         };
 
-        // Confirmation Email (To User)
         const userMailOptions = {
-            from: process.env.EMAIL,
+            from: fromAddr,
             to: email,
-            subject: "Thank you for contacting us!",
+            subject: 'Thanks for your message — Satyam',
             html: `
                 <h3>Hi ${fname},</h3>
-                <p>Thank you for reaching out to us. We've received your message and will get back to you shortly.</p>
-                <p><strong>Your Message:</strong> ${message}</p>
+                <p>Thanks for taking a moment to write in through my portfolio — I really appreciate it.</p>
+                <p>I've got your note and I'll reply as soon as I can.</p>
+                <p><strong>What you sent:</strong> ${message}</p>
                 <br />
-                <p>Best regards,<br/>Support Team</p>
-            `
+                <p>Cheers,<br/>Satyam Kumar</p>
+            `,
         };
 
-        // Send both emails
-        await transporter.sendMail(adminMailOptions);
-        await transporter.sendMail(userMailOptions);
+        const mailErrors = [];
 
-        return res.status(201).json({ message: "Message sent and confirmation email delivered." });
-    } catch (err) {
-        console.error("Error in register route:", err);
-        return res.status(500).json({ error: "Internal Server Error" });
+        try {
+            await sendMailWithTimeout(transporter, adminMailOptions, 'Admin notification');
+            console.log('[register] admin mail ok');
+        } catch (e) {
+            console.error('[register] admin mail failed:', e.message);
+            mailErrors.push(`Admin copy: ${e.message}`);
+        }
+
+        try {
+            await sendMailWithTimeout(transporter, userMailOptions, 'User confirmation');
+            console.log('[register] user mail ok');
+        } catch (e) {
+            console.error('[register] user mail failed:', e.message);
+            mailErrors.push(`Confirmation to user: ${e.message}`);
+        }
+
+        if (mailErrors.length === 0) {
+            return res.status(201).json({
+                message: 'Message sent and emails delivered.',
+                emailSent: true,
+                saved: true,
+            });
+        }
+
+        if (mailErrors.length === 2) {
+            return res.status(201).json({
+                message:
+                    'Message saved, but email could not be sent. Check EMAIL / EMAIL_PASS (Gmail App Password) in Render.',
+                details: mailErrors,
+                saved: true,
+                emailSent: false,
+            });
+        }
+
+        return res.status(201).json({
+            message: 'Message saved; one email may have failed — check server logs.',
+            details: mailErrors,
+            saved: true,
+            emailSent: mailErrors.length === 0,
+        });
+    } catch (unexpected) {
+        console.error('[register] unexpected error:', unexpected);
+        return res.status(500).json({ error: 'Something went wrong. Please try again later.' });
     }
 });
 

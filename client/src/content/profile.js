@@ -8,36 +8,46 @@ export const social = {
   github: "https://github.com/ssatyamm07",
 };
 
+/** App-style nav labels (delivery-app tone, still clear for a portfolio) */
+export const appNav = {
+  home: "Home",
+  journey: "Your route",
+  projects: "Top picks",
+  about: "The story",
+};
+
 export const hero = {
   greeting: "Hello, I'm",
   name: "Satyam Kumar",
-  /** Large headline (reference-style hero) */
+  brandKicker: "Your stack. Delivered fresh.",
   headline: "I build scalable B2B systems & process automation",
-  roleLabel: "Backend & automation engineer",
+  roleLabel: "Backend, freelance delivery & automation · Swiggy",
   titleSequence: [
     "Executive Process Automation Engineer",
-    2000,
-    "Backend & B2B systems",
-    2000,
-    "Node.js · PostgreSQL · AWS",
-    2000,
+    2200,
+    "Shipping internal tools that scale",
+    2200,
+    "Node · PostgreSQL · AWS · Angular",
+    2200,
   ],
   tagline:
-    "Backend-focused engineer building scalable internal B2B platforms — reliable APIs, solid data models, and automation that cuts manual work.",
+    "Crisp APIs, tidy data models, and automation that saves real hours — the same discipline I bring to high-traffic ops products.",
   highlights: [
     "Node.js, Express, PostgreSQL",
     "AWS SQS & S3 · system design",
     "Angular for full-stack delivery",
     "Automation & workflow tooling",
   ],
+  ctaPrimary: "Place your order (say hi)",
+  ctaSecondary: "Menu PDF (resume)",
 };
 
 export const summary = {
   short:
-    "I design and ship backend services for high-traffic operational needs: clear architecture, efficient SQL, and async patterns with queues and object storage. I care about maintainability, observability, and shipping features that teams actually use.",
+    "I plate up backend services for busy teams: solid architecture, snappy SQL, and async flows with queues & object storage — maintainable, observable, and ready for the dinner rush.",
   longParagraphs: [
     "I'm a backend-focused software engineer with hands-on experience building scalable B2B systems. My toolkit centers on Node.js, PostgreSQL, and pragmatic system design, with AWS services like SQS and S3 for asynchronous work and durable storage.",
- "I've delivered full-stack features with Angular on the frontend and enjoy collaborating in agile teams. Outside of work I build side projects, stay fit, and enjoy singing.",
+    "I've shipped freelance work too — from responsive UI for Nano Split (Zaxgen) to mobile commerce on Saras (sprsaras.com) — alongside full-stack features with Angular in product teams. Outside of work I build side projects, stay fit, and enjoy singing.",
   ],
 };
 
@@ -51,14 +61,39 @@ export const experience = [
     highlights: ["Completed degree June 2025", "Foundation in CS, systems, and software engineering"],
   },
   {
-    id: "instance",
+    id: "swiggy",
     kind: "work",
-    title: "Node.js Developer Intern",
-    org: "Instance IT Solutions · On-site",
-    range: "Dec 2024 – Feb 2025",
+    title: "Executive Process Automation Engineer",
+    org: "Swiggy",
+    range: "Nov 2025 – Present",
     highlights: [
-      "Debugged and stabilized production backend issues",
-      "Improved REST API performance and scalability",
+      "Node.js & Express services for internal B2B apps",
+      "PostgreSQL schema design & query optimization",
+      "AWS SQS & S3 for async processing and storage",
+      "Angular contributions for full-stack delivery",
+      "Workflow automation to reduce manual operations",
+    ],
+  },
+  {
+    id: "freelance-zaxgen",
+    kind: "work",
+    title: "UI Developer (Freelance)",
+    org: "Zaxgen · Nano Split",
+    range: "2025",
+    highlights: [
+      "UI-focused delivery with responsive layouts and reusable components",
+      "Aligned with product and engineering for a consistent cross-device experience",
+    ],
+  },
+  {
+    id: "freelance-sprsaras",
+    kind: "work",
+    title: "Full-stack / E-commerce (Freelance)",
+    org: "Saras · sprsaras.com",
+    range: "2025",
+    highlights: [
+      "Product catalog, offers, and mobile-first shopping flows",
+      "Integration with backend services and team delivery practices",
     ],
   },
   {
@@ -75,17 +110,14 @@ export const experience = [
     ],
   },
   {
-    id: "swiggy",
+    id: "instance",
     kind: "work",
-    title: "Executive Process Automation Engineer",
-    org: "Swiggy",
-    range: "Nov 2025 – Present",
+    title: "Node.js Developer Intern",
+    org: "Instance IT Solutions · On-site",
+    range: "Dec 2024 – Feb 2025",
     highlights: [
-      "Node.js & Express services for internal B2B apps",
-      "PostgreSQL schema design & query optimization",
-      "AWS SQS & S3 for async processing and storage",
-      "Angular contributions for full-stack delivery",
-      "Workflow automation to reduce manual operations",
+      "Debugged and stabilized production backend issues",
+      "Improved REST API performance and scalability",
     ],
   },
 ];
@@ -108,6 +140,12 @@ export const journeyStops = [
     id: "bytexl",
     label: "Scaled up",
     sub: "ByteXL · TypeScript & ES",
+    year: "2025",
+  },
+  {
+    id: "freelance",
+    label: "Side orders",
+    sub: "Freelance · UI & commerce APIs",
     year: "2025",
   },
   {
@@ -147,12 +185,74 @@ export const education = [
   },
 ];
 
+export const quickCartCopy = {
+  barTitle: "View tray",
+  barSub: "Resume · links · stack — no extra charges",
+  drawerTitle: "Your add-ons",
+  drawerSub: "Tap what you need. I usually reply faster than a 10-minute delivery window.",
+};
+
 export const quickCartItems = [
   { id: "resume", label: "Download resume", href: "/Satyam_Resume.pdf", download: "Satyam_Kumar_Resume.pdf", icon: "fa-file-pdf" },
   { id: "linkedin", label: "LinkedIn", href: social.linkedin, external: true, icon: "fa-brands fa-linkedin" },
   { id: "github", label: "GitHub", href: social.github, external: true, icon: "fa-brands fa-github" },
-  { id: "email", label: "Email", href: `mailto:${social.email}`, external: true, icon: "fa-envelope" },
+  { id: "email", label: "Email chef", href: `mailto:${social.email}`, external: true, icon: "fa-envelope" },
 ];
+
+const RESUME_FILE = "/Satyam_Resume.pdf";
+
+/** Swiggy-style footer structure (generic copy — not the real company site) */
+export const footerContent = {
+  brandLine: "Satyam Kumar",
+  brandSub: "Backend & automation — served hot.",
+  finePrint: (y) => `© ${y} Satyam Kumar. Portfolio only.`,
+  columns: [
+    {
+      title: "Company",
+      links: [
+        { label: "The story", to: "/about" },
+        { label: "Your route", href: "/#journey" },
+        { label: "Top picks", href: "/#projects" },
+        { label: "Say hello", to: "/contact" },
+      ],
+    },
+    {
+      title: "Contact us",
+      links: [
+        { label: "Help & hire", to: "/contact" },
+        { label: social.email, href: `mailto:${social.email}`, external: true },
+        { label: social.phoneDisplay, href: "tel:+918340429200", external: true },
+      ],
+    },
+    {
+      title: "Legal & work",
+      links: [
+        { label: "All projects", to: "/playlist" },
+        { label: "Resume", href: RESUME_FILE, download: "Satyam_Kumar_Resume.pdf" },
+        { label: "GitHub", href: social.github, external: true },
+        { label: "LinkedIn", href: social.linkedin, external: true },
+      ],
+    },
+  ],
+  availableTitle: "Based in",
+  availableLine: social.location,
+  socialTitle: "Social links",
+  bottomPitch: "For a smoother collab, reach out — I’m usually faster than peak-hour traffic.",
+  bottomPrimary: { label: "Order a conversation", to: "/contact" },
+  bottomSecondary: { label: "Grab resume", href: RESUME_FILE, download: "Satyam_Kumar_Resume.pdf" },
+};
+
+export const homeClosing = {
+  title: "Hungry for a solid hire?",
+  text: "If you need backend, automation, or platform muscle — let’s line up a quick chat. No minimum order.",
+  ctaPrimary: "Open contact",
+  ctaSecondary: "Email me",
+};
+
+export const skillsHeadline = {
+  title: "What's cooking",
+  kicker: "Skills",
+};
 
 /** Grid tiles for “What I do” — Font Awesome 6 classes */
 export const skillTiles = [

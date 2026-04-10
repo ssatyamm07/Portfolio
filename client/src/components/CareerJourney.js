@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { journeyStops } from "../content/profile";
 import "./CareerJourney.css";
 
-const H_POSITIONS_PCT = [8, 34, 60, 86];
-const V_POSITIONS_PCT = [6, 32, 58, 84];
+const H_POSITIONS_PCT = [6, 26, 48, 70, 88];
+const V_POSITIONS_PCT = [5, 24, 44, 64, 84];
 
 /** Generic delivery-style bike icon */
 function JourneyVehicle({ className, style }) {

@@ -1,74 +1,189 @@
-.footer {
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
+/* Light “app footer” — inspired by delivery-app marketing footers */
+.footer--swiggy {
+  background: #f0f0f0;
+  color: #3d4152;
+  border-top: none;
+  margin-top: 0;
   padding: var(--space-2xl) var(--space-lg);
   padding-bottom: calc(var(--space-2xl) + 100px + env(safe-area-inset-bottom));
-  margin-top: var(--space-2xl);
+  font-family: var(--font-sans);
 }
 
-.footer__container {
-  max-width: var(--max-width);
+.footer__main {
+  max-width: 1180px;
   margin: 0 auto;
+}
+
+.footer__grid {
+  display: grid;
+  gap: var(--space-xl) var(--space-2xl);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .footer__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .footer__grid {
+    grid-template-columns: 1.1fr repeat(3, 1fr) 1fr;
+    align-items: start;
+  }
+}
+
+.footer__brand-col {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--space-xl);
-}
-
-.footer__section {
-  min-width: 200px;
-}
-
-.footer__title {
-  margin: 0 0 var(--space-md);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.footer__muted {
-  margin: 0 0 var(--space-sm);
-  color: var(--color-text-subtle);
-  font-size: 0.9rem;
-}
-
-.footer__line {
-  margin: 0 0 var(--space-sm);
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: var(--space-sm);
 }
 
-.footer__line i {
+.footer__logo-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+}
+
+.footer__brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.footer__brand-name {
+  font-size: 1.35rem;
+  font-weight: 800;
   color: var(--color-primary);
-  width: 1.1rem;
+  letter-spacing: -0.02em;
+}
+
+.footer__brand-tag {
+  font-size: 0.9rem;
+  color: #686b78;
+  font-weight: 500;
+}
+
+.footer__fine {
+  margin: var(--space-sm) 0 0;
+  font-size: 0.8rem;
+  color: #93959f;
+}
+
+.footer__col-title {
+  margin: 0 0 var(--space-md);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #02060cbf;
+}
+
+.footer__col-title--spaced {
+  margin-top: var(--space-lg);
+}
+
+.footer__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.footer__link {
+  color: #686b78;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.footer__link:hover {
+  color: var(--color-primary);
+}
+
+.footer__plain {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #686b78;
+  line-height: 1.5;
 }
 
 .footer__socials {
   display: flex;
   gap: var(--space-md);
-  margin-top: var(--space-md);
+  margin-top: var(--space-xs);
 }
 
 .footer__socials a {
-  color: var(--color-text-muted);
-  font-size: 1.35rem;
-  transition: color 0.2s ease;
+  color: #3d4152;
+  font-size: 1.2rem;
+  transition: color 0.15s ease;
 }
 
 .footer__socials a:hover {
   color: var(--color-primary);
 }
 
-.footer__link {
-  color: var(--color-text-muted);
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.2s ease;
+.footer__rule {
+  height: 1px;
+  background: #e9e9eb;
+  margin: var(--space-2xl) 0 var(--space-lg);
 }
 
-.footer__link:hover {
-  color: var(--color-primary);
+.footer__bottom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  align-items: flex-start;
+}
+
+@media (min-width: 768px) {
+  .footer__bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.footer__pitch {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #3d4152;
+  max-width: 28rem;
+}
+
+.footer__bottom-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.footer__pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1.1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none !important;
+  transition: opacity 0.15s ease;
+}
+
+.footer__pill--dark {
+  background: #1a1a1a;
+  color: #fff !important;
+}
+
+.footer__pill--dark:hover {
+  opacity: 0.9;
+  color: #fff !important;
 }

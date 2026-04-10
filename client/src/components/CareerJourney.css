@@ -1,6 +1,8 @@
 .career-journey {
-  padding: var(--space-3xl) var(--space-lg);
+  padding: var(--space-3xl) var(--space-lg) calc(var(--space-3xl) + var(--space-sm));
+  margin-bottom: var(--space-sm);
   background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(252, 128, 25, 0.08), transparent 55%);
+  scroll-margin-top: var(--header-height);
 }
 
 .career-journey__container {

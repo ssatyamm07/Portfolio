@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { quickCartItems, skills } from "../content/profile";
+import { quickCartItems, quickCartCopy, skills } from "../content/profile";
 import "./QuickCart.css";
 
 const skillChips = [
@@ -39,7 +39,8 @@ export default function QuickCart() {
   return (
     <>
       <div className="quick-cart-bar" role="region" aria-label="Quick actions bar">
-        <button          type="button"
+        <button
+          type="button"
           className="quick-cart-bar__toggle"
           onClick={() => setOpen(true)}
           aria-expanded={open}
@@ -49,8 +50,8 @@ export default function QuickCart() {
             <i className="fa-solid fa-bag-shopping" />
           </span>
           <span className="quick-cart-bar__text">
-            <strong>Quick order</strong>
-            <span>Resume, links &amp; stack</span>
+            <strong>{quickCartCopy.barTitle}</strong>
+            <span>{quickCartCopy.barSub}</span>
           </span>
         </button>
       </div>
@@ -72,7 +73,7 @@ export default function QuickCart() {
         <div className="quick-cart-drawer__handle" aria-hidden />
         <div className="quick-cart-drawer__head">
           <h2 id="quick-cart-title" className="quick-cart-drawer__title">
-            Your stack pack
+            {quickCartCopy.drawerTitle}
           </h2>
           <button
             ref={closeBtnRef}
@@ -85,9 +86,7 @@ export default function QuickCart() {
           </button>
         </div>
 
-        <p className="quick-cart-drawer__sub">
-          Same idea as a delivery cart — shortcuts recruiters use most.
-        </p>
+        <p className="quick-cart-drawer__sub">{quickCartCopy.drawerSub}</p>
 
         <ul className="quick-cart-drawer__list">
           {quickCartItems.map((item) => (
@@ -111,7 +110,7 @@ export default function QuickCart() {
         </ul>
 
         <div className="quick-cart-drawer__chips-section">
-          <h3 className="quick-cart-drawer__chips-label">Top skills</h3>
+          <h3 className="quick-cart-drawer__chips-label">Popular sides</h3>
           <div className="quick-cart-drawer__chips">
             {skillChips.map((s) => (
               <span key={s} className="quick-cart-drawer__chip">

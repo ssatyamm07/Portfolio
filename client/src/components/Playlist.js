@@ -35,9 +35,20 @@ const Playlist = () => {
               {projectData.map((el, index) => (
                 <div className="col-md-6 col-lg-4" key={el.id} data-aos="fade-up" data-aos-delay={index * 50}>
                   <Card className="playlist-card border-0 h-100">
-                    <Card.Img variant="top" className="playlist-card__img" src={el.imgsrc} alt="" />
+                    <Card.Img
+                      variant="top"
+                      className="playlist-card__img"
+                      src={el.imgsrc}
+                      alt=""
+                      style={
+                        el.previewObjectPosition ? { objectPosition: el.previewObjectPosition } : undefined
+                      }
+                    />
                     <Card.Body className="d-flex flex-column">
                       <Card.Title className="playlist-card__title">{el.projectName}</Card.Title>
+                      {el.roleLine && (
+                        <p className="playlist-card__role text-muted small mb-2">{el.roleLine}</p>
+                      )}
                       {el.tags && (
                         <div className="playlist-card__tags mb-2">
                           {el.tags.map((t) => (
@@ -46,15 +57,24 @@ const Playlist = () => {
                         </div>
                       )}
                       <Card.Text className="playlist-card__text flex-grow-1">{el.description}</Card.Text>
-                      {el.demo ? (
-                        <Button variant="warning" className="playlist-card__btn align-self-start">
-                          <a href={el.demo} target="_blank" rel="noopener noreferrer" className="text-dark text-decoration-none fw-semibold">
-                            Live demo
-                          </a>
-                        </Button>
-                      ) : (
-                        <span className="playlist-card__muted">Demo on request</span>
-                      )}
+                      <div className="playlist-card__actions d-flex flex-column gap-2 align-items-start">
+                        {el.demo ? (
+                          <Button variant="warning" className="playlist-card__btn">
+                            <a
+                              href={el.demo}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-dark text-decoration-none fw-semibold"
+                            >
+                              {el.demoOnDemand ? "Live site" : "Live demo"}
+                            </a>
+                          </Button>
+                        ) : null}
+                        {el.demoOnDemand ? (
+                          <span className="playlist-card__muted">Demo on demand — login required for full access.</span>
+                        ) : null}
+                        {!el.demo ? <span className="playlist-card__muted">Demo on request</span> : null}
+                      </div>
                     </Card.Body>
                   </Card>
                 </div>
