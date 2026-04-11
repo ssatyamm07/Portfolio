@@ -25,6 +25,29 @@ function getMailCredentials() {
     return { user, pass };
 }
 
+function getResendApiKey() {
+    return (process.env.RESEND_API_KEY || '').trim();
+}
+
+/** Inbox for admin copies of contact form (Resend path). */
+function getNotifyInbox() {
+    return (
+        (process.env.NOTIFY_EMAIL || process.env.ADMIN_EMAIL || process.env.EMAIL || process.env.MAIL_USER || '')
+            .trim() || null
+    );
+}
+
+function getResendFrom() {
+    const raw = (process.env.RESEND_FROM || '').trim();
+    if (raw) return raw;
+    return 'Portfolio <onboarding@resend.dev>';
+}
+
+/** True if we can try to send mail (Resend API or Gmail SMTP). */
+function hasOutboundMail() {
+    return Boolean(getResendApiKey() || getMailCredentials());
+}
+
 function createMailTransport() {
     const creds = getMailCredentials();
     if (!creds) {
@@ -57,6 +80,50 @@ function sendMailWithTimeout(transporter, mailOptions, label, ms = 28000) {
     ]);
 }
 
+/**
+ * Resend over HTTPS — reliable from cloud hosts where Gmail SMTP often never connects.
+ * @param {{ to: string; subject: string; html: string; label: string }} opts
+ */
+async function sendViaResend({ to, subject, html, label }) {
+    const apiKey = getResendApiKey();
+    if (!apiKey) throw new Error(`${label}: RESEND_API_KEY not set`);
+
+    const from = getResendFrom();
+    const ctrl = new AbortController();
+    const ms = 25000;
+    const timer = setTimeout(() => ctrl.abort(), ms);
+
+    try {
+        const res = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${apiKey}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                from,
+                to: [to],
+                subject,
+                html,
+            }),
+            signal: ctrl.signal,
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const msg = data.message || data.name || res.statusText || `HTTP ${res.status}`;
+            throw new Error(`${label}: ${msg}`);
+        }
+    } catch (e) {
+        if (e.name === 'AbortError') {
+            throw new Error(`${label}: Resend request timed out after ${ms}ms`);
+        }
+        throw e;
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
 function escapeHtml(text) {
     return String(text ?? '')
         .replace(/&/g, '&amp;')
@@ -67,10 +134,66 @@ function escapeHtml(text) {
 }
 
 /**
- * All SMTP work runs here after the HTTP response is sent — never block the client on
- * createTransport / Gmail (Render → Google can stall for a long time).
+ * Mail runs after the HTTP response — never block the client.
+ * Prefers Resend (HTTPS) when RESEND_API_KEY is set; otherwise Gmail SMTP via nodemailer.
  */
 async function sendContactMailInBackgroundFromSubmission({ fname, lname, email, mobile, message }) {
+    const safeFname = escapeHtml(fname);
+    const safeLname = escapeHtml(lname);
+    const safeEmail = escapeHtml(email);
+    const safeMobile = escapeHtml(mobile);
+    const safeMessage = escapeHtml(message);
+
+    const adminHtml = `
+                <h3>Contact Form Submission</h3>
+                <p><strong>Name:</strong> ${safeFname} ${safeLname}</p>
+                <p><strong>Email:</strong> ${safeEmail}</p>
+                <p><strong>Mobile:</strong> ${safeMobile}</p>
+                <p><strong>Message:</strong> ${safeMessage}</p>
+            `;
+
+    const userHtml = `
+                <h3>Hi ${safeFname},</h3>
+                <p>Thanks for taking a moment to write in through my portfolio — I really appreciate it.</p>
+                <p>I've got your note and I'll reply as soon as I can.</p>
+                <p><strong>What you sent:</strong> ${safeMessage}</p>
+                <br />
+                <p>Cheers,<br/>Satyam Kumar</p>
+            `;
+
+    if (getResendApiKey()) {
+        const adminTo = getNotifyInbox();
+        if (!adminTo) {
+            console.error(
+                '[register] Resend: set NOTIFY_EMAIL, ADMIN_EMAIL, or EMAIL so admin notifications have a recipient.'
+            );
+        } else {
+            try {
+                await sendViaResend({
+                    to: adminTo,
+                    subject: 'New Contact Form Submission',
+                    html: adminHtml,
+                    label: 'Admin notification (Resend)',
+                });
+                devLog('[register] admin mail ok (Resend)');
+            } catch (e) {
+                console.error('[register] admin mail failed:', e.message);
+            }
+        }
+        try {
+            await sendViaResend({
+                to: email,
+                subject: 'Thanks for your message — Satyam',
+                html: userHtml,
+                label: 'User confirmation (Resend)',
+            });
+            devLog('[register] user mail ok (Resend)');
+        } catch (e) {
+            console.error('[register] user mail failed:', e.message);
+        }
+        return;
+    }
+
     const transporter = createMailTransport();
     if (!transporter) return;
 
@@ -78,37 +201,18 @@ async function sendContactMailInBackgroundFromSubmission({ fname, lname, email, 
     if (!creds) return;
 
     const fromAddr = creds.user;
-    const safeFname = escapeHtml(fname);
-    const safeLname = escapeHtml(lname);
-    const safeEmail = escapeHtml(email);
-    const safeMobile = escapeHtml(mobile);
-    const safeMessage = escapeHtml(message);
-
     const adminMailOptions = {
         from: fromAddr,
         to: fromAddr,
         subject: 'New Contact Form Submission',
-        html: `
-                <h3>Contact Form Submission</h3>
-                <p><strong>Name:</strong> ${safeFname} ${safeLname}</p>
-                <p><strong>Email:</strong> ${safeEmail}</p>
-                <p><strong>Mobile:</strong> ${safeMobile}</p>
-                <p><strong>Message:</strong> ${safeMessage}</p>
-            `,
+        html: adminHtml,
     };
 
     const userMailOptions = {
         from: fromAddr,
         to: email,
         subject: 'Thanks for your message — Satyam',
-        html: `
-                <h3>Hi ${safeFname},</h3>
-                <p>Thanks for taking a moment to write in through my portfolio — I really appreciate it.</p>
-                <p>I've got your note and I'll reply as soon as I can.</p>
-                <p><strong>What you sent:</strong> ${safeMessage}</p>
-                <br />
-                <p>Cheers,<br/>Satyam Kumar</p>
-            `,
+        html: userHtml,
     };
 
     try {
@@ -163,10 +267,10 @@ router.post('/register', async (req, res) => {
             return res.status(500).json({ error: 'Could not save message. Check DATABASE / MongoDB.' });
         }
 
-        if (!getMailCredentials()) {
+        if (!hasOutboundMail()) {
             return res.status(201).json({
                 message:
-                    'Message saved. Email is not configured on the server (optional: EMAIL + EMAIL_PASS).',
+                    'Message saved. Email is not configured (set RESEND_API_KEY or EMAIL + EMAIL_PASS).',
                 emailSent: false,
                 saved: true,
             });
