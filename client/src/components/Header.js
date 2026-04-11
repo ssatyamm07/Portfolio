@@ -19,8 +19,18 @@ const Header = () => {
       <div className="site-header__bar">
         <div className="site-header__inner">
           <NavLink to="/" className="site-header__brand" end>
-            <span className="site-header__brand-name">Satyam Kumar</span>
-            <span className="site-header__brand-role">Backend · automation</span>
+            <img
+              src={`${process.env.PUBLIC_URL}/favicon.svg`}
+              alt=""
+              width="40"
+              height="40"
+              className="site-header__brand-mark"
+              decoding="async"
+            />
+            <span className="site-header__brand-stack">
+              <span className="site-header__brand-name">Satyam Kumar</span>
+              <span className="site-header__brand-role">Backend · automation</span>
+            </span>
           </NavLink>
 
           <nav className="site-header__nav" aria-label="Main">
@@ -37,8 +47,11 @@ const Header = () => {
               {appNav.about}
             </NavLink>
             <a href={contactHref} className="site-header__link site-header__link--anchor">
-              Say hi
+              {appNav.contact}
             </a>
+          </nav>
+
+          <div className="site-header__actions">
             <a
               className="site-header__cta"
               href={RESUME_PATH}
@@ -48,14 +61,18 @@ const Header = () => {
             >
               Resume
             </a>
-          </nav>
-
-          <a className="site-header__email" href={`mailto:${social.email}`}>
-            <span className="site-header__email-icon" aria-hidden>
-              <i className="fa-solid fa-envelope" />
-            </span>
-            <span className="site-header__email-text">{social.email}</span>
-          </a>
+            <a
+              className="site-header__email"
+              href={`mailto:${social.email}`}
+              aria-label={`Email ${social.email}`}
+              title={social.email}
+            >
+              <span className="site-header__email-icon" aria-hidden>
+                <i className="fa-solid fa-envelope" />
+              </span>
+              <span className="visually-hidden">{social.email}</span>
+            </a>
+          </div>
         </div>
       </div>
     </header>

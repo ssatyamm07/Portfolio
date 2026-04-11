@@ -202,11 +202,22 @@
 }
 
 .home-hero-card__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-weight: 800;
   font-size: 1.05rem;
   color: var(--color-primary) !important;
   text-decoration: none !important;
   letter-spacing: -0.02em;
+}
+
+.home-hero-card__brand-mark {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  object-fit: contain;
 }
 
 .home-hero-card__brand.active {
@@ -353,12 +364,15 @@
   background: transparent;
   color: #fff !important;
   border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-.home-hero-card__cta--ghost:hover {
+.home-hero-card__cta--ghost:hover,
+.home-hero-card__cta--ghost:focus-visible {
   border-color: var(--color-primary);
-  color: var(--color-primary) !important;
-  background: rgba(252, 128, 25, 0.1);
+  background: var(--color-primary);
+  color: #1a0a00 !important;
+  transform: translateY(-2px);
 }
 
 /* Photo */
@@ -562,6 +576,11 @@
 @media (prefers-reduced-motion: reduce) {
   .home-aside-card__arch-flow {
     animation: none;
+  }
+
+  .home-hero-card__cta--ghost:hover,
+  .home-hero-card__cta--ghost:focus-visible {
+    transform: none;
   }
 }
 
@@ -781,12 +800,14 @@
   text-decoration: none !important;
   border: 1px solid rgba(255, 255, 255, 0.35);
   color: #fff !important;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
-.home-btn--ghost:hover {
+.home-btn--ghost:hover,
+.home-btn--ghost:focus-visible {
   border-color: var(--color-primary);
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--color-primary);
+  color: #1a0a00 !important;
 }
 
 /* CTA */
@@ -846,11 +867,14 @@
   background: transparent;
   color: #fff !important;
   border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-.home-cta__btn--ghost:hover {
+.home-cta__btn--ghost:hover,
+.home-cta__btn--ghost:focus-visible {
   border-color: var(--color-primary);
-  color: var(--color-primary) !important;
+  background: var(--color-primary);
+  color: #1a0a00 !important;
 }
 
 /* Journey section on orange canvas */

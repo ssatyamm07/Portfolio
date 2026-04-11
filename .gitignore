@@ -24,6 +24,7 @@ coverage/
 # Caches
 client/node_modules/.cache/
 **/.eslintcache
+.eslintcache
 
 # Logs
 npm-debug.log*

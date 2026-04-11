@@ -11,32 +11,33 @@ export const social = {
 /** App-style nav labels (delivery-app tone, still clear for a portfolio) */
 export const appNav = {
   home: "Home",
-  journey: "Your route",
+  journey: "My route",
   projects: "Top picks",
   about: "The story",
+  contact: "Say hi",
 };
 
 export const hero = {
   greeting: "Hello, I'm",
   name: "Satyam Kumar",
-  brandKicker: "Your stack. Delivered fresh.",
-  headline: "I build scalable B2B systems & process automation",
-  roleLabel: "Backend, freelance delivery & automation · Swiggy",
+  brandKicker: "Backend · APIs · automation",
+  headline: "I build scalable systems & process automation",
+  roleLabel: "Swiggy · Executive Process Automation Engineer · Freelance",
   titleSequence: [
     "Executive Process Automation Engineer",
     2200,
-    "Shipping internal tools that scale",
+    "New codebase? Read, build, ship.",
     2200,
     "Node · PostgreSQL · AWS · Angular",
     2200,
   ],
   tagline:
-    "Crisp APIs, tidy data models, and automation that saves real hours — the same discipline I bring to high-traffic ops products.",
+    "I ship backend work that stays up: clear APIs, solid schemas, queues when you need them, and automation that saves real time. I ramp on new tools when the ticket asks — I don’t pretend to know everything on day one.",
   highlights: [
-    "Node.js, Express, PostgreSQL",
-    "AWS SQS & S3 · system design",
-    "Angular for full-stack delivery",
-    "Automation & workflow tooling",
+    "Node, Express, PostgreSQL",
+    "AWS SQS & S3, pragmatic design",
+    "Angular when the team needs it",
+    "Internal tools & workflow automation",
   ],
   ctaPrimary: "Place your order (say hi)",
   ctaSecondary: "Menu PDF (resume)",
@@ -44,10 +45,10 @@ export const hero = {
 
 export const summary = {
   short:
-    "I plate up backend services for busy teams: solid architecture, snappy SQL, and async flows with queues & object storage — maintainable, observable, and ready for the dinner rush.",
+    "Backend engineer: turn requirements into services, ship in steps, leave room to improve after launch.",
   longParagraphs: [
-    "I'm a backend-focused software engineer with hands-on experience building scalable B2B systems. My toolkit centers on Node.js, PostgreSQL, and pragmatic system design, with AWS services like SQS and S3 for asynchronous work and durable storage.",
-    "I've shipped freelance work too — from responsive UI for Nano Split (Zaxgen) to mobile commerce on Saras (sprsaras.com) — alongside full-stack features with Angular in product teams. Outside of work I build side projects, stay fit, and enjoy singing.",
+    "Strongest on Node.js, PostgreSQL, and practical backend design. I use AWS (SQS, S3) when work should be async or durable. For side quests — search, auth, a bit of Angular — I learn what’s needed and still hit the date.",
+    "Freelance: fast ramp on UI and commerce (Nano Split / Zaxgen, Saras). Swiggy: internal products and automation at scale. Side projects for ideas I don’t get at work. Off-screen: fitness and music.",
   ],
 };
 
@@ -189,7 +190,7 @@ export const quickCartCopy = {
   barTitle: "View tray",
   barSub: "Resume · links · stack — no extra charges",
   drawerTitle: "Your add-ons",
-  drawerSub: "Tap what you need. I usually reply faster than a 10-minute delivery window.",
+  drawerSub: "Tap what you need — I read every message and reply as soon as I can.",
 };
 
 export const quickCartItems = [
@@ -204,14 +205,14 @@ const RESUME_FILE = "/Satyam_Resume.pdf";
 /** Swiggy-style footer structure (generic copy — not the real company site) */
 export const footerContent = {
   brandLine: "Satyam Kumar",
-  brandSub: "Backend & automation — served hot.",
+  brandSub: "Backend & automation.",
   finePrint: (y) => `© ${y} Satyam Kumar. Portfolio only.`,
   columns: [
     {
       title: "Company",
       links: [
         { label: "The story", to: "/about" },
-        { label: "Your route", href: "/#journey" },
+        { label: "My route", href: "/#journey" },
         { label: "Top picks", href: "/#projects" },
         { label: "Say hello", to: "/contact" },
       ],
@@ -237,21 +238,21 @@ export const footerContent = {
   availableTitle: "Based in",
   availableLine: social.location,
   socialTitle: "Social links",
-  bottomPitch: "For a smoother collab, reach out — I’m usually faster than peak-hour traffic.",
+  bottomPitch: "Reach out — I’ll say where I’m strong and where I’d need a short ramp.",
   bottomPrimary: { label: "Order a conversation", to: "/contact" },
   bottomSecondary: { label: "Grab resume", href: RESUME_FILE, download: "Satyam_Kumar_Resume.pdf" },
 };
 
 export const homeClosing = {
-  title: "Hungry for a solid hire?",
-  text: "If you need backend, automation, or platform muscle — let’s line up a quick chat. No minimum order.",
+  title: "Let’s talk",
+  text: "Backend and automation are my main lanes. I’m upfront if a role needs skills I’m still growing. Short call is enough to see if we fit.",
   ctaPrimary: "Open contact",
   ctaSecondary: "Email me",
 };
 
 export const skillsHeadline = {
-  title: "What's cooking",
-  kicker: "Skills",
+  title: "Stack",
+  kicker: "Tech",
 };
 
 /** Grid tiles for “What I do” — Font Awesome 6 classes */

@@ -35,13 +35,14 @@
   display: none;
   position: relative;
   width: 100%;
-  min-height: 120px;
+  min-height: 100px;
+  margin-bottom: var(--space-sm);
 }
 
 .career-journey__map--vertical {
   display: flex;
   position: relative;
-  width: 48px;
+  width: 44px;
   min-height: 320px;
   flex-shrink: 0;
   align-self: stretch;
@@ -51,25 +52,53 @@
   width: 100%;
   height: 100px;
   display: block;
+  overflow: visible;
 }
 
+/* Single dashed path — avoids the “double line” look from stacked strokes */
 .career-journey__road {
-  stroke: rgba(252, 128, 25, 0.45);
+  stroke: rgba(255, 255, 255, 0.62);
   stroke-width: 3;
   stroke-dasharray: 10 8;
   stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.28));
 }
 
-.career-journey__vehicle {
+.career-journey__waypoint-halo {
+  fill: rgba(252, 128, 25, 0.22);
+}
+
+.career-journey__waypoint-dot {
+  fill: var(--color-primary);
+  stroke: rgba(15, 15, 18, 0.75);
+  stroke-width: 1.25;
+}
+
+.career-journey__bike {
   position: absolute;
   color: var(--color-primary);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
-  transition: left 0.65s cubic-bezier(0.33, 1, 0.68, 1), top 0.65s cubic-bezier(0.33, 1, 0.68, 1);
+  font-size: clamp(1.5rem, 2.8vw, 1.85rem);
+  line-height: 1;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.45));
+  transition:
+    left 0.55s cubic-bezier(0.33, 1, 0.68, 1),
+    top 0.55s cubic-bezier(0.33, 1, 0.68, 1),
+    transform 0.35s ease;
 }
 
-.career-journey__vehicle--h {
-  bottom: 4px;
-  transform: translateX(-50%);
+.career-journey__bike--h {
+  /* left/top from JS = WAYPOINTS in viewBox % — center icon on the path */
+  transform: translate(-50%, -50%) rotate(-6deg);
+}
+
+.career-journey__bike--h.is-last-leg {
+  transform: translate(-50%, -50%) scaleX(-1) rotate(-6deg);
+}
+
+.career-journey__bike--v {
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-90deg);
 }
 
 .career-journey__vline {
@@ -78,13 +107,9 @@
   top: 0;
   bottom: 0;
   width: 0;
-  border-left: 3px dashed rgba(252, 128, 25, 0.45);
+  border-left: 3px dashed rgba(255, 255, 255, 0.45);
   transform: translateX(-50%);
-}
-
-.career-journey__vehicle--v {
-  left: 50%;
-  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.2));
 }
 
 .career-journey__stops {
@@ -137,7 +162,7 @@
 @media (min-width: 768px) {
   .career-journey__layout {
     flex-direction: column;
-    gap: var(--space-xl);
+    gap: var(--space-lg);
   }
 
   .career-journey__map--horizontal {
@@ -155,8 +180,15 @@
   }
 }
 
+/* Wide screens: one row of five so the route lines up with cards */
+@media (min-width: 1100px) {
+  .career-journey__stops {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .career-journey__vehicle {
+  .career-journey__bike {
     transition: none;
   }
 }

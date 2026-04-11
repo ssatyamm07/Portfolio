@@ -12,6 +12,7 @@ import HashScroll from './HashScroll.js';
 import SectionScrollIndicator from './components/SectionScrollIndicator.js';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop';
+import RestoreScrollOnRoute from './components/RestoreScrollOnRoute';
 
 function isHardReload() {
   if (typeof performance === 'undefined') return false;
@@ -77,6 +78,7 @@ function App() {
   return (
     <>
       <HardRefreshHomeRedirect />
+      <RestoreScrollOnRoute />
       <HashScroll />
       <AppRoutes />
       <ScrollToTop />

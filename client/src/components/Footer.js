@@ -37,8 +37,14 @@ const Footer = () => {
       <div className="footer__main">
         <div className="footer__grid">
           <div className="footer__brand-col">
-            <div className="footer__logo-mark" aria-hidden>
-              <i className="fa-solid fa-location-dot" />
+            <div className="footer__logo-mark">
+              <img
+                src={`${process.env.PUBLIC_URL}/favicon.svg`}
+                alt=""
+                width="48"
+                height="48"
+                decoding="async"
+              />
             </div>
             <div className="footer__brand-text">
               <span className="footer__brand-name">{brandLine}</span>

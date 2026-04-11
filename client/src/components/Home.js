@@ -9,6 +9,9 @@ import projectData, { homeSpotlightProjects } from "./data";
 import { hero, social, experience, appNav, homeClosing } from "../content/profile";
 import "./Home.css";
 
+/** How many project cards to show on Home; full list is on /playlist */
+const HOME_PROJECTS_PREVIEW_COUNT = 3;
+
 const RESUME_PATH = "/Satyam_Resume.pdf";
 
 /** Decorative diagram for the “Architecture that scales” spotlight card */
@@ -121,7 +124,7 @@ const Home = () => {
   return (
     <main className="home home--reference">
       <div className="home-watermark" aria-hidden>
-        Portfolio
+        Satyam Kumar
       </div>
 
       <section className="home-top" id="hero">
@@ -134,7 +137,15 @@ const Home = () => {
                   className={({ isActive }) => `home-hero-card__brand${isActive ? " active" : ""}`}
                   end
                 >
-                  {hero.name}
+                  <img
+                    src={`${process.env.PUBLIC_URL}/favicon.svg`}
+                    alt=""
+                    width="36"
+                    height="36"
+                    className="home-hero-card__brand-mark"
+                    decoding="async"
+                  />
+                  <span>{hero.name}</span>
                 </NavLink>
                 <div className="home-hero-card__links">
                   <NavLink
@@ -363,10 +374,11 @@ const Home = () => {
             More from the menu
           </h2>
           <p className="home-section-lead" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
-            Freelance highlights above; here’s the full menu — personal builds and client work, each with its own preview.
+            Freelance highlights above; three picks below — the full catalog (personal builds and client work) lives on
+            the projects page.
           </p>
           <div className="home-projects__grid">
-            {projectData.map((project, index) => (
+            {projectData.slice(0, HOME_PROJECTS_PREVIEW_COUNT).map((project, index) => (
               <div
                 key={project.id}
                 className="home-project-card-outer"
@@ -426,7 +438,7 @@ const Home = () => {
           </div>
           <div className="home-projects__more" data-aos="fade-up" data-aos-anchor-placement="top-bottom">
             <Link to="/playlist" className="home-btn home-btn--ghost">
-              See full menu
+              See all projects
             </Link>
           </div>
         </div>

@@ -1,41 +1,64 @@
-/* Inner pages: Swiggy-style orange accent strip + dark bar (no gap) */
+/* Sticky bar: orange accent strip + black-tinted glass bar — brand | centered nav | actions */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 100;
   padding: 0;
   background: transparent;
-  border: none;
-  box-shadow: none;
 }
 
 .site-header__stripe {
-  height: 6px;
+  height: 4px;
   width: 100%;
-  background: var(--color-primary);
+  background: linear-gradient(90deg, var(--color-primary), #ff9a4d);
   flex-shrink: 0;
 }
 
 .site-header__bar {
-  background: #1c1c1c;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  /* Black glass: dark tint + blur so page color shows through softly */
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.68) 0%,
+    rgba(0, 0, 0, 0.82) 100%
+  );
+  backdrop-filter: blur(22px) saturate(1.35);
+  -webkit-backdrop-filter: blur(22px) saturate(1.35);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .site-header__inner {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 var(--space-lg);
+  padding: 0 clamp(var(--space-md), 3vw, var(--space-xl));
   min-height: var(--header-height);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
+  gap: clamp(var(--space-sm), 2vw, var(--space-xl));
 }
 
 .site-header__brand {
   text-decoration: none;
   color: inherit;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.site-header__brand-mark {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  object-fit: contain;
+}
+
+.site-header__brand-stack {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -44,50 +67,62 @@
 
 .site-header__brand-name {
   font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   letter-spacing: -0.02em;
   color: var(--color-primary) !important;
+  line-height: 1.1;
 }
 
 .site-header__brand-role {
-  font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.48);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
 }
 
 .site-header__nav {
+  flex: 1;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-xs) var(--space-md);
   justify-content: center;
-  flex: 1;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+  min-width: 0;
 }
 
 .site-header__link {
-  text-decoration: none;
-  font-size: 0.88rem;
+  text-decoration: none !important;
+  font-size: 0.84rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.55) !important;
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-  transition: color 0.2s ease, background 0.2s ease;
+  color: rgba(255, 255, 255, 0.52) !important;
+  padding: 0.45rem 0.65rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: color 0.18s ease, background 0.18s ease;
 }
 
 .site-header__link:hover {
   color: #fff !important;
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .site-header__link.active {
   color: #fff !important;
+  background: rgba(252, 128, 25, 0.15);
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
 }
 
 .site-header__cta {
-  text-decoration: none;
+  text-decoration: none !important;
   font-size: 0.8rem;
   font-weight: 700;
-  padding: 0.4rem 0.9rem;
+  padding: 0.45rem 1rem;
   border-radius: 999px;
   background: var(--color-primary);
   color: #1a0a00 !important;
@@ -97,59 +132,93 @@
 .site-header__cta:hover {
   background: #ff9a4d;
   color: #1a0a00 !important;
+  transform: translateY(-1px);
 }
 
 .site-header__email {
-  display: none;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-sm);
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   text-decoration: none !important;
-  color: rgba(255, 255, 255, 0.92) !important;
-  font-size: 0.78rem;
-  font-weight: 500;
-  max-width: 260px;
+  color: #fff !important;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
 }
 
-@media (min-width: 1100px) {
-  .site-header__email {
-    display: inline-flex;
-  }
+.site-header__email:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #1a0a00 !important;
+  transform: translateY(-1px);
+}
+
+.site-header__email:hover .site-header__email-icon {
+  color: #1a0a00;
 }
 
 .site-header__email-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  color: #1a0a00;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  font-size: 0.95rem;
+  color: inherit;
 }
 
-.site-header__email-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+@media (prefers-reduced-motion: reduce) {
+  .site-header__cta:hover,
+  .site-header__email:hover {
+    transform: none;
+  }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
+  .site-header__inner {
+    flex-wrap: wrap;
+    row-gap: var(--space-sm);
+    padding-top: var(--space-sm);
+    padding-bottom: var(--space-sm);
+    min-height: 0;
+  }
+
+  .site-header__brand {
+    order: 0;
+  }
+
+  .site-header__actions {
+    order: 1;
+    margin-left: auto;
+  }
+
+  .site-header__nav {
+    order: 2;
+    flex: 1 1 100%;
+    justify-content: flex-start;
+    padding-top: var(--space-xs);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+}
+
+@media (max-width: 576px) {
   .site-header__brand-role {
     display: none;
   }
 
-  .site-header__nav {
-    gap: 0.1rem 0.35rem;
-  }
-
   .site-header__link {
     font-size: 0.78rem;
-    padding: 0.2rem 0.3rem;
+    padding: 0.35rem 0.5rem;
   }
 
   .site-header__cta {
-    padding: 0.3rem 0.65rem;
+    padding: 0.4rem 0.75rem;
     font-size: 0.75rem;
+  }
+
+  .site-header__email {
+    width: 38px;
+    height: 38px;
   }
 }

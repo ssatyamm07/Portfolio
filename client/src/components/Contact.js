@@ -21,7 +21,7 @@ const Contact = () => {
   const [sending, setSending] = useState(false);
 
   useEffect(() => {
-    AOS.init({ duration: 1000 });
+    AOS.init({ duration: 800, once: true });
   }, []);
 
   const getValue = (e) => {
@@ -99,102 +99,144 @@ const Contact = () => {
 
   return (
     <>
-      <div className="container mb-5 contact" data-aos="fade-up">
-        <h2 className="text-center mb-4">Contact</h2>
-        <div className="container">
-          <Form className="row" onSubmit={handleSubmit}>
-            {sending ? (
-              <div
-                className="contact__sending col-12 mb-3"
-                role="status"
-                aria-live="polite"
-                aria-busy="true"
-              >
-                <div className="contact__sending-inner">
-                  <Spinner
-                    animation="border"
-                    role="presentation"
-                    className="contact__spinner"
-                    aria-hidden="true"
-                  />
-                  <div className="contact__sending-text">
-                    <span className="contact__sending-title">Sending your message</span>
-                    <span className="contact__sending-sub">Hang tight — just a moment.</span>
+      <main className="contact contact--reference">
+        <div className="contact-watermark" aria-hidden>
+          Say hi
+        </div>
+
+        <div className="contact-top">
+          <div className="contact-page__shell">
+            <article className="contact-page__card" data-aos="fade-up">
+              <header className="contact-page__header">
+                <p className="contact-page__eyebrow">Contact</p>
+                <h1 className="contact-page__title">Drop a line</h1>
+                <p className="contact-page__lead">
+                  One thread — your details and message go straight to my inbox (and saved securely on the server).
+                </p>
+              </header>
+
+              <div className="contact-chat">
+                <div className="contact-chat__thread" aria-hidden="true">
+                  <div className="contact-chat__row-bubble">
+                    <div className="contact-chat__avatar" aria-hidden>
+                      SK
+                    </div>
+                    <div className="contact-chat__bubble">
+                      <p className="contact-chat__bubble-text">
+                        Hey — what are you building, or what role are you hiring for? Drop the context below; I read
+                        every message.
+                      </p>
+                      <span className="contact-chat__bubble-meta">Satyam · usually replies within a day</span>
+                    </div>
                   </div>
                 </div>
+
+                <Form className="contact-chat__composer" onSubmit={handleSubmit}>
+                  {sending ? (
+                    <div className="contact__sending" role="status" aria-live="polite" aria-busy="true">
+                      <div className="contact__sending-inner">
+                        <Spinner
+                          animation="border"
+                          role="presentation"
+                          className="contact__spinner"
+                          aria-hidden="true"
+                        />
+                        <div className="contact__sending-text">
+                          <span className="contact__sending-title">Sending your message</span>
+                          <span className="contact__sending-sub">Hang tight — just a moment.</span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <div className="contact-chat__grid">
+                    <Form.Group className="contact-chat__field">
+                      <Form.Label className="contact-chat__label">First name</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="fname"
+                        value={inputValue.fname}
+                        onChange={getValue}
+                        placeholder="Ada"
+                        disabled={sending}
+                        className="contact-chat__input"
+                        autoComplete="given-name"
+                      />
+                    </Form.Group>
+                    <Form.Group className="contact-chat__field">
+                      <Form.Label className="contact-chat__label">Last name</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="lname"
+                        value={inputValue.lname}
+                        onChange={getValue}
+                        placeholder="Lovelace"
+                        disabled={sending}
+                        className="contact-chat__input"
+                        autoComplete="family-name"
+                      />
+                    </Form.Group>
+                    <Form.Group className="contact-chat__field contact-chat__field--wide">
+                      <Form.Label className="contact-chat__label">Email</Form.Label>
+                      <Form.Control
+                        type="email"
+                        name="email"
+                        value={inputValue.email}
+                        onChange={getValue}
+                        placeholder="you@company.com"
+                        disabled={sending}
+                        className="contact-chat__input"
+                        autoComplete="email"
+                      />
+                    </Form.Group>
+                    <Form.Group className="contact-chat__field contact-chat__field--wide">
+                      <Form.Label className="contact-chat__label">Mobile</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="mobile"
+                        value={inputValue.mobile}
+                        onChange={getValue}
+                        placeholder="+91 · optional if email is best"
+                        disabled={sending}
+                        className="contact-chat__input"
+                        autoComplete="tel"
+                      />
+                    </Form.Group>
+                  </div>
+
+                  <Form.Group className="contact-chat__field contact-chat__field--message">
+                    <Form.Label className="contact-chat__label">Message</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={5}
+                      name="message"
+                      value={inputValue.message}
+                      onChange={getValue}
+                      placeholder="Project context, stack, timeline, links…"
+                      disabled={sending}
+                      className="contact-chat__textarea"
+                    />
+                  </Form.Group>
+
+                  <div className="contact-chat__footer">
+                    <span className="contact-chat__hint">Press send — same as email, just routed through the site.</span>
+                    <Button type="submit" className="contact-chat__send" disabled={sending}>
+                      {sending ? (
+                        "Sending…"
+                      ) : (
+                        <>
+                          Send <i className="fa-solid fa-paper-plane ms-2" aria-hidden />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </Form>
               </div>
-            ) : null}
-
-            <Form.Group className="mb-3 col-lg-6">
-              <Form.Label>First Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="fname"
-                value={inputValue.fname}
-                onChange={getValue}
-                placeholder="Enter your first name"
-                disabled={sending}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3 col-lg-6">
-              <Form.Label>Last Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="lname"
-                value={inputValue.lname}
-                onChange={getValue}
-                placeholder="Enter your last name"
-                disabled={sending}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3 col-lg-6">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={inputValue.email}
-                onChange={getValue}
-                placeholder="example@example.com"
-                disabled={sending}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3 col-lg-6">
-              <Form.Label>Mobile</Form.Label>
-              <Form.Control
-                type="text"
-                name="mobile"
-                value={inputValue.mobile}
-                onChange={getValue}
-                placeholder="Enter your mobile number"
-                disabled={sending}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-4 col-12">
-              <Form.Label>Message</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={4}
-                name="message"
-                value={inputValue.message}
-                onChange={getValue}
-                placeholder="Write your message here"
-                disabled={sending}
-              />
-            </Form.Group>
-
-            <div className="d-flex justify-content-center">
-              <Button variant="primary" className="col-lg-6" type="submit" disabled={sending}>
-                {sending ? "Sending…" : "Submit"}
-              </Button>
-            </div>
-          </Form>
+            </article>
+          </div>
         </div>
-        <ToastContainer position="top-center" closeOnClick pauseOnHover />
-      </div>
+      </main>
+      <ToastContainer position="top-center" closeOnClick pauseOnHover />
     </>
   );
 };

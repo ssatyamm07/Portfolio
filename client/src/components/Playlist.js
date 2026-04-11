@@ -16,22 +16,39 @@ const Playlist = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  return (
-    <>
-      {spin ? (
-        <div className="playlist-loading" role="status" aria-live="polite">
-          <Spinner animation="border" variant="warning" /> <span>Loading projects…</span>
+  if (spin) {
+    return (
+      <main className="playlist playlist--reference">
+        <div className="playlist-watermark" aria-hidden>
+          Top picks
         </div>
-      ) : (
-        <main className="playlist-page">
-          <div className="playlist-page__inner">
-            <h1 className="playlist-page__title" data-aos="fade-up">
-              Projects
-            </h1>
-            <p className="playlist-page__lead" data-aos="fade-up">
-              Builds that mirror production work: APIs, data layers, and interfaces people actually use.
-            </p>
-            <div className="row g-4">
+        <div className="playlist-top playlist-top--loading">
+          <div className="playlist-loading" role="status" aria-live="polite">
+            <Spinner animation="border" className="playlist-loading__spinner" />
+            <span>Loading projects…</span>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="playlist playlist--reference">
+      <div className="playlist-watermark" aria-hidden>
+        Top picks
+      </div>
+      <div className="playlist-top">
+        <div className="playlist-page__shell">
+          <article className="playlist-page__card">
+            <header className="playlist-page__header" data-aos="fade-up">
+              <p className="playlist-page__eyebrow">Projects</p>
+              <h1 className="playlist-page__title">Top picks</h1>
+              <p className="playlist-page__lead">
+                Builds that mirror production work: APIs, data layers, and interfaces people actually use.
+              </p>
+            </header>
+
+            <div className="row g-4 playlist-page__grid">
               {projectData.map((el, index) => (
                 <div className="col-md-6 col-lg-4" key={el.id} data-aos="fade-up" data-aos-delay={index * 50}>
                   <Card className="playlist-card border-0 h-100">
@@ -44,11 +61,9 @@ const Playlist = () => {
                         el.previewObjectPosition ? { objectPosition: el.previewObjectPosition } : undefined
                       }
                     />
-                    <Card.Body className="d-flex flex-column">
+                    <Card.Body className="playlist-card__body d-flex flex-column">
                       <Card.Title className="playlist-card__title">{el.projectName}</Card.Title>
-                      {el.roleLine && (
-                        <p className="playlist-card__role text-muted small mb-2">{el.roleLine}</p>
-                      )}
+                      {el.roleLine && <p className="playlist-card__role">{el.roleLine}</p>}
                       {el.tags && (
                         <div className="playlist-card__tags mb-2">
                           {el.tags.map((t) => (
@@ -64,7 +79,7 @@ const Playlist = () => {
                               href={el.demo}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-dark text-decoration-none fw-semibold"
+                              className="playlist-card__btn-link"
                             >
                               {el.demoOnDemand ? "Live site" : "Live demo"}
                             </a>
@@ -80,10 +95,10 @@ const Playlist = () => {
                 </div>
               ))}
             </div>
-          </div>
-        </main>
-      )}
-    </>
+          </article>
+        </div>
+      </div>
+    </main>
   );
 };
 

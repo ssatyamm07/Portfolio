@@ -4,6 +4,10 @@ const mongoose = require('mongoose');
 const Message = require('../models/messageSchema');
 const nodemailer = require('nodemailer');
 
+/** Avoid noisy / PII-heavy logs in production; keep errors on console.error */
+const devLog =
+    process.env.NODE_ENV !== 'production' ? (...args) => console.log(...args) : () => {};
+
 /**
  * Mail is optional. If creds are missing, contact form still saves to MongoDB and returns 201.
  * Supports EMAIL + EMAIL_PASS or MAIL_USER + MAIL_PASS.
@@ -61,7 +65,7 @@ function saveMessageWithTimeout(doc, ms = 20000) {
 router.post('/register', async (req, res) => {
     try {
         const { fname, lname, email, mobile, message } = req.body || {};
-        console.log('[register] incoming:', { fname, lname, email, mobile, messageLen: message?.length });
+        devLog('[register] submission', { messageLen: message?.length });
 
         if (!fname || !lname || !email || !mobile || !message) {
             return res.status(422).json({ error: 'Please fill all fields' });
@@ -79,7 +83,7 @@ router.post('/register', async (req, res) => {
         try {
             newMessage = new Message({ fname, lname, email, mobile, message });
             await saveMessageWithTimeout(newMessage);
-            console.log('[register] saved to MongoDB, id:', newMessage._id);
+            devLog('[register] saved to MongoDB, id:', newMessage._id);
         } catch (err) {
             console.error('[register] MongoDB save error:', err.message);
             return res.status(500).json({ error: 'Could not save message. Check DATABASE / MongoDB.' });
@@ -127,7 +131,7 @@ router.post('/register', async (req, res) => {
 
         try {
             await sendMailWithTimeout(transporter, adminMailOptions, 'Admin notification');
-            console.log('[register] admin mail ok');
+            devLog('[register] admin mail ok');
         } catch (e) {
             console.error('[register] admin mail failed:', e.message);
             mailErrors.push(`Admin copy: ${e.message}`);
@@ -135,7 +139,7 @@ router.post('/register', async (req, res) => {
 
         try {
             await sendMailWithTimeout(transporter, userMailOptions, 'User confirmation');
-            console.log('[register] user mail ok');
+            devLog('[register] user mail ok');
         } catch (e) {
             console.error('[register] user mail failed:', e.message);
             mailErrors.push(`Confirmation to user: ${e.message}`);
