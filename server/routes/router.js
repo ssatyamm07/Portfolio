@@ -2,59 +2,40 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Message = require('../models/messageSchema');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
 /** Avoid noisy / PII-heavy logs in production; keep errors on console.error */
 const devLog =
     process.env.NODE_ENV !== 'production' ? (...args) => console.log(...args) : () => {};
 
 /**
- * Mail is optional. If creds are missing, contact form still saves to MongoDB and returns 201.
- * Supports EMAIL + EMAIL_PASS or MAIL_USER + MAIL_PASS.
- * Gmail App Passwords are often shown as "xxxx xxxx xxxx xxxx"; spaces are stripped for SMTP.
+ * Mail via Resend (HTTPS — works on Render free tier unlike SMTP port 465/587).
+ * Set RESEND_API_KEY, RESEND_FROM, and EMAIL in Render env vars.
+ *
+ * RESEND_FROM   – sender address, e.g. "Portfolio <onboarding@resend.dev>" or a verified domain
+ * EMAIL         – your own email to receive admin notifications
+ *
+ * NOTE: Resend's onboarding@resend.dev sandbox can only deliver to the
+ * account owner's email. To send confirmations to arbitrary visitors you
+ * must add a verified domain in the Resend dashboard and update RESEND_FROM.
  */
-function normalizeAppPassword(raw) {
-    if (raw == null) return '';
-    return String(raw).replace(/\s+/g, '').trim();
+function getResendClient() {
+    const apiKey = (process.env.RESEND_API_KEY || '').trim();
+    if (!apiKey) return null;
+    return new Resend(apiKey);
 }
 
-function getMailCredentials() {
-    const user = (process.env.EMAIL || process.env.MAIL_USER || '').trim();
-    const pass = normalizeAppPassword(process.env.EMAIL_PASS || process.env.MAIL_PASS);
-    if (!user || !pass) return null;
-    return { user, pass };
+function getResendFrom() {
+    return (process.env.RESEND_FROM || process.env.EMAIL || '').trim() || null;
 }
 
-function createMailTransport() {
-    const creds = getMailCredentials();
-    if (!creds) {
-        console.warn(
-            '[mail] No mail env (set EMAIL + EMAIL_PASS, or MAIL_USER + MAIL_PASS) — saving to DB only.'
-        );
-        return null;
-    }
-
-    // Explicit host/port: more reliable from cloud hosts (e.g. Render) than service: 'gmail' alone.
-    // family: 4 avoids some IPv6 routing issues to Google SMTP.
-    return nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: { user: creds.user, pass: creds.pass },
-        connectionTimeout: 45000,
-        greetingTimeout: 30000,
-        socketTimeout: 60000,
-        family: 4,
-    });
+function getAdminEmail() {
+    return (process.env.EMAIL || process.env.MAIL_USER || '').trim() || null;
 }
 
-function sendMailWithTimeout(transporter, mailOptions, label, ms = 28000) {
-    return Promise.race([
-        transporter.sendMail(mailOptions),
-        new Promise((_, reject) =>
-            setTimeout(() => reject(new Error(`${label}: send timed out after ${ms}ms`)), ms)
-        ),
-    ]);
+/** Returns true when mail is configured; used to decide response shape. */
+function isMailConfigured() {
+    return !!(getResendClient() && getResendFrom() && getAdminEmail());
 }
 
 function escapeHtml(text) {
@@ -70,6 +51,15 @@ function escapeHtml(text) {
  * Mail runs after the HTTP response — never block the client on slow SMTP (e.g. Gmail from cloud hosts).
  */
 async function sendContactMailInBackgroundFromSubmission({ fname, lname, email, mobile, message }) {
+    const resend = getResendClient();
+    const from = getResendFrom();
+    const adminEmail = getAdminEmail();
+
+    if (!resend || !from || !adminEmail) {
+        console.warn('[mail] Resend not configured — skipping email.');
+        return;
+    }
+
     const safeFname = escapeHtml(fname);
     const safeLname = escapeHtml(lname);
     const safeEmail = escapeHtml(email);
@@ -93,35 +83,29 @@ async function sendContactMailInBackgroundFromSubmission({ fname, lname, email, 
                 <p>Cheers,<br/>Satyam Kumar</p>
             `;
 
-    const transporter = createMailTransport();
-    if (!transporter) return;
-
-    const creds = getMailCredentials();
-    if (!creds) return;
-
-    const fromAddr = creds.user;
-    const adminMailOptions = {
-        from: fromAddr,
-        to: fromAddr,
-        subject: 'New Contact Form Submission',
-        html: adminHtml,
-    };
-
-    const userMailOptions = {
-        from: fromAddr,
-        to: email,
-        subject: 'Thanks for your message — Satyam',
-        html: userHtml,
-    };
-
+    // Admin notification
     try {
-        await sendMailWithTimeout(transporter, adminMailOptions, 'Admin notification');
+        const { error } = await resend.emails.send({
+            from,
+            to: adminEmail,
+            subject: 'New Contact Form Submission',
+            html: adminHtml,
+        });
+        if (error) throw new Error(JSON.stringify(error));
         devLog('[register] admin mail ok');
     } catch (e) {
         console.error('[register] admin mail failed:', e.message);
     }
+
+    // User confirmation — may fail on sandbox (onboarding@resend.dev) if recipient ≠ account owner
     try {
-        await sendMailWithTimeout(transporter, userMailOptions, 'User confirmation');
+        const { error } = await resend.emails.send({
+            from,
+            to: email,
+            subject: 'Thanks for your message — Satyam',
+            html: userHtml,
+        });
+        if (error) throw new Error(JSON.stringify(error));
         devLog('[register] user mail ok');
     } catch (e) {
         console.error('[register] user mail failed:', e.message);
@@ -166,10 +150,10 @@ router.post('/register', async (req, res) => {
             return res.status(500).json({ error: 'Could not save message. Check DATABASE / MongoDB.' });
         }
 
-        if (!getMailCredentials()) {
+        if (!isMailConfigured()) {
             return res.status(201).json({
                 message:
-                    'Message saved. Email is not configured on the server (optional: EMAIL + EMAIL_PASS).',
+                    'Message saved. Email is not configured on the server (optional: RESEND_API_KEY + RESEND_FROM + EMAIL).',
                 emailSent: false,
                 saved: true,
             });
