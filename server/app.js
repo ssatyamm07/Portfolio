@@ -17,8 +17,7 @@ const port = Number(process.env.PORT) || 5050;
 const defaultOrigins = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    'https://say-hi-satyam.vercel.app',
-    'https://portfolio-updated-eta.vercel.app',
+    'https://say-hi-satyam.vercel.app'
 ];
 const envOrigins = process.env.CLIENT_ORIGINS
     ? process.env.CLIENT_ORIGINS.split(',').map((s) => s.trim()).filter(Boolean)
