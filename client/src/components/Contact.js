@@ -55,6 +55,11 @@ const Contact = () => {
             "Your message is saved — I'll still get it. (Email alerts aren't set up on the server yet.)",
             { autoClose: 6000 }
           );
+        } else if (res.data?.emailPending) {
+          toast.success(
+            "Cheers — your message is saved! I'll reply as soon as I can. (A confirmation email may arrive shortly.)",
+            { autoClose: 5500 }
+          );
         } else {
           toast.success("Cheers — got your message! I'll reply as soon as I can.", {
             autoClose: 5000,

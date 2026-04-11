@@ -48,7 +48,7 @@ function createMailTransport() {
     });
 }
 
-function sendMailWithTimeout(transporter, mailOptions, label, ms = 55000) {
+function sendMailWithTimeout(transporter, mailOptions, label, ms = 28000) {
     return Promise.race([
         transporter.sendMail(mailOptions),
         new Promise((_, reject) =>
@@ -56,6 +56,75 @@ function sendMailWithTimeout(transporter, mailOptions, label, ms = 55000) {
         ),
     ]);
 }
+
+function escapeHtml(text) {
+    return String(text ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+/**
+ * All SMTP work runs here after the HTTP response is sent — never block the client on
+ * createTransport / Gmail (Render → Google can stall for a long time).
+ */
+async function sendContactMailInBackgroundFromSubmission({ fname, lname, email, mobile, message }) {
+    const transporter = createMailTransport();
+    if (!transporter) return;
+
+    const creds = getMailCredentials();
+    if (!creds) return;
+
+    const fromAddr = creds.user;
+    const safeFname = escapeHtml(fname);
+    const safeLname = escapeHtml(lname);
+    const safeEmail = escapeHtml(email);
+    const safeMobile = escapeHtml(mobile);
+    const safeMessage = escapeHtml(message);
+
+    const adminMailOptions = {
+        from: fromAddr,
+        to: fromAddr,
+        subject: 'New Contact Form Submission',
+        html: `
+                <h3>Contact Form Submission</h3>
+                <p><strong>Name:</strong> ${safeFname} ${safeLname}</p>
+                <p><strong>Email:</strong> ${safeEmail}</p>
+                <p><strong>Mobile:</strong> ${safeMobile}</p>
+                <p><strong>Message:</strong> ${safeMessage}</p>
+            `,
+    };
+
+    const userMailOptions = {
+        from: fromAddr,
+        to: email,
+        subject: 'Thanks for your message — Satyam',
+        html: `
+                <h3>Hi ${safeFname},</h3>
+                <p>Thanks for taking a moment to write in through my portfolio — I really appreciate it.</p>
+                <p>I've got your note and I'll reply as soon as I can.</p>
+                <p><strong>What you sent:</strong> ${safeMessage}</p>
+                <br />
+                <p>Cheers,<br/>Satyam Kumar</p>
+            `,
+    };
+
+    try {
+        await sendMailWithTimeout(transporter, adminMailOptions, 'Admin notification');
+        devLog('[register] admin mail ok');
+    } catch (e) {
+        console.error('[register] admin mail failed:', e.message);
+    }
+    try {
+        await sendMailWithTimeout(transporter, userMailOptions, 'User confirmation');
+        devLog('[register] user mail ok');
+    } catch (e) {
+        console.error('[register] user mail failed:', e.message);
+    }
+}
+
 
 function saveMessageWithTimeout(doc, ms = 20000) {
     return Promise.race([
@@ -94,8 +163,7 @@ router.post('/register', async (req, res) => {
             return res.status(500).json({ error: 'Could not save message. Check DATABASE / MongoDB.' });
         }
 
-        const transporter = createMailTransport();
-        if (!transporter) {
+        if (!getMailCredentials()) {
             return res.status(201).json({
                 message:
                     'Message saved. Email is not configured on the server (optional: EMAIL + EMAIL_PASS).',
@@ -104,76 +172,20 @@ router.post('/register', async (req, res) => {
             });
         }
 
-        const fromAddr = getMailCredentials().user;
-        const adminMailOptions = {
-            from: fromAddr,
-            to: fromAddr,
-            subject: 'New Contact Form Submission',
-            html: `
-                <h3>Contact Form Submission</h3>
-                <p><strong>Name:</strong> ${fname} ${lname}</p>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Mobile:</strong> ${mobile}</p>
-                <p><strong>Message:</strong> ${message}</p>
-            `,
-        };
-
-        const userMailOptions = {
-            from: fromAddr,
-            to: email,
-            subject: 'Thanks for your message — Satyam',
-            html: `
-                <h3>Hi ${fname},</h3>
-                <p>Thanks for taking a moment to write in through my portfolio — I really appreciate it.</p>
-                <p>I've got your note and I'll reply as soon as I can.</p>
-                <p><strong>What you sent:</strong> ${message}</p>
-                <br />
-                <p>Cheers,<br/>Satyam Kumar</p>
-            `,
-        };
-
-        const mailErrors = [];
-
-        try {
-            await sendMailWithTimeout(transporter, adminMailOptions, 'Admin notification');
-            devLog('[register] admin mail ok');
-        } catch (e) {
-            console.error('[register] admin mail failed:', e.message);
-            mailErrors.push(`Admin copy: ${e.message}`);
-        }
-
-        try {
-            await sendMailWithTimeout(transporter, userMailOptions, 'User confirmation');
-            devLog('[register] user mail ok');
-        } catch (e) {
-            console.error('[register] user mail failed:', e.message);
-            mailErrors.push(`Confirmation to user: ${e.message}`);
-        }
-
-        if (mailErrors.length === 0) {
-            return res.status(201).json({
-                message: 'Message sent and emails delivered.',
-                emailSent: true,
-                saved: true,
-            });
-        }
-
-        if (mailErrors.length === 2) {
-            return res.status(201).json({
-                message:
-                    'Message saved, but email could not be sent. Check EMAIL / EMAIL_PASS (Gmail App Password) in Render.',
-                details: mailErrors,
-                saved: true,
-                emailSent: false,
-            });
-        }
-
-        return res.status(201).json({
-            message: 'Message saved; one email may have failed — check server logs.',
-            details: mailErrors,
+        res.status(201).json({
+            message:
+                'Thanks — your message is saved. A confirmation email may follow if SMTP succeeds.',
             saved: true,
-            emailSent: mailErrors.length === 0,
+            emailPending: true,
         });
+
+        const payload = { fname, lname, email, mobile, message };
+        setImmediate(() => {
+            sendContactMailInBackgroundFromSubmission(payload).catch((err) => {
+                console.error('[register] background mail:', err);
+            });
+        });
+        return;
     } catch (unexpected) {
         console.error('[register] unexpected error:', unexpected);
         return res.status(500).json({ error: 'Something went wrong. Please try again later.' });
