@@ -157,7 +157,7 @@ const Contact = () => {
                         name="fname"
                         value={inputValue.fname}
                         onChange={getValue}
-                        placeholder="Ada"
+                        placeholder="Your first name"
                         disabled={sending}
                         className="contact-chat__input"
                         autoComplete="given-name"
@@ -170,7 +170,7 @@ const Contact = () => {
                         name="lname"
                         value={inputValue.lname}
                         onChange={getValue}
-                        placeholder="Lovelace"
+                        placeholder="Your last name"
                         disabled={sending}
                         className="contact-chat__input"
                         autoComplete="family-name"
@@ -183,7 +183,7 @@ const Contact = () => {
                         name="email"
                         value={inputValue.email}
                         onChange={getValue}
-                        placeholder="you@company.com"
+                        placeholder="Your email"
                         disabled={sending}
                         className="contact-chat__input"
                         autoComplete="email"
@@ -196,7 +196,7 @@ const Contact = () => {
                         name="mobile"
                         value={inputValue.mobile}
                         onChange={getValue}
-                        placeholder="+91 · optional if email is best"
+                        placeholder="Your mobile number"
                         disabled={sending}
                         className="contact-chat__input"
                         autoComplete="tel"
