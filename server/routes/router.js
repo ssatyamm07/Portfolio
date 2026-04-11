@@ -34,16 +34,21 @@ function createMailTransport() {
         return null;
     }
 
+    // Explicit host/port: more reliable from cloud hosts (e.g. Render) than service: 'gmail' alone.
+    // family: 4 avoids some IPv6 routing issues to Google SMTP.
     return nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
         auth: { user: creds.user, pass: creds.pass },
-        connectionTimeout: 15000,
-        greetingTimeout: 15000,
-        socketTimeout: 25000,
+        connectionTimeout: 45000,
+        greetingTimeout: 30000,
+        socketTimeout: 60000,
+        family: 4,
     });
 }
 
-function sendMailWithTimeout(transporter, mailOptions, label, ms = 22000) {
+function sendMailWithTimeout(transporter, mailOptions, label, ms = 55000) {
     return Promise.race([
         transporter.sendMail(mailOptions),
         new Promise((_, reject) =>
