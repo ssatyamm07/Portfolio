@@ -32,7 +32,7 @@ export const hero = {
     2200,
   ],
   tagline:
-    "I ship backend work that stays up: clear APIs, solid schemas, queues when you need them, and automation that saves real time. I ramp on new tools when the ticket asks — I don’t pretend to know everything on day one.",
+    "Backend-focused engineer building scalable B2B systems at Swiggy — reliable APIs, solid PostgreSQL schemas, AWS when work should be async, and automation that cuts manual effort. Angular when the team needs full-stack delivery.",
   highlights: [
     "Node, Express, PostgreSQL",
     "AWS SQS & S3, pragmatic design",
@@ -45,10 +45,10 @@ export const hero = {
 
 export const summary = {
   short:
-    "Backend engineer: turn requirements into services, ship in steps, leave room to improve after launch.",
+    "Backend-focused software engineer building scalable B2B systems — Node.js, PostgreSQL, system design, and AWS.",
   longParagraphs: [
-    "Strongest on Node.js, PostgreSQL, and practical backend design. I use AWS (SQS, S3) when work should be async or durable. For side quests — search, auth, a bit of Angular — I learn what’s needed and still hit the date.",
-    "Freelance: fast ramp on UI and commerce (Nano Split / Zaxgen, Saras). Swiggy: internal products and automation at scale. Side projects for ideas I don’t get at work. Off-screen: fitness and music.",
+    "I focus on designing reliable, high-performance architectures with Node.js, PostgreSQL, and pragmatic system design. AWS (SQS, S3) for async and durable work; Angular when features need full-stack delivery.",
+    "At Swiggy I build internal B2B services and workflow automation. Freelance: UI for Nano Split (Zaxgen) and backend for an e-commerce platform (Saras). Side projects — Grocery, TextUtils, SafarSang — for ideas outside day job. Off-screen: fitness and singing.",
   ],
 };
 
@@ -68,11 +68,12 @@ export const experience = [
     org: "Swiggy",
     range: "Nov 2025 – Present",
     highlights: [
-      "Node.js & Express services for internal B2B apps",
+      "Node.js & Express services for internal B2B applications",
       "PostgreSQL schema design & query optimization",
+      "Scalable system design, architecture, and reliability",
       "AWS SQS & S3 for async processing and storage",
       "Angular contributions for full-stack delivery",
-      "Workflow automation to reduce manual operations",
+      "Workflow automation to reduce manual effort",
     ],
   },
   {
@@ -82,19 +83,21 @@ export const experience = [
     org: "Zaxgen · Nano Split",
     range: "2025",
     highlights: [
-      "UI-focused delivery with responsive layouts and reusable components",
-      "Aligned with product and engineering for a consistent cross-device experience",
+      "Designed and built responsive UI for Nano Split — usability and intuitive UX",
+      "Translated product requirements into reusable, cross-device components",
+      "Collaborated with backend and product teams for seamless feature integration",
     ],
   },
   {
     id: "freelance-sprsaras",
     kind: "work",
-    title: "Full-stack / E-commerce (Freelance)",
-    org: "Saras · sprsaras.com",
+    title: "Backend Developer (Freelance)",
+    org: "E-commerce Platform · sprsaras.com",
     range: "2025",
     highlights: [
-      "Product catalog, offers, and mobile-first shopping flows",
-      "Integration with backend services and team delivery practices",
+      "Scalable PostgreSQL schemas for products, orders, and users",
+      "RESTful APIs for core business logic and performance",
+      "Cross-team integration between backend services and frontend",
     ],
   },
   {
@@ -105,8 +108,9 @@ export const experience = [
     range: "Jul 2025 – Oct 2025",
     highlights: [
       "4-tier backend with Node.js, Express, TypeScript",
-      "Elasticsearch search API with aggregations",
-      "JWT access/refresh auth & Docker Compose",
+      "Elasticsearch search API with full-text search & aggregations",
+      "JWT access/refresh auth with middleware authorization",
+      "Docker Compose for consistent dev environments",
       "SQS listener for async job orchestration",
     ],
   },
@@ -117,8 +121,9 @@ export const experience = [
     org: "Instance IT Solutions · On-site",
     range: "Dec 2024 – Feb 2025",
     highlights: [
-      "Debugged and stabilized production backend issues",
-      "Improved REST API performance and scalability",
+      "Identified and fixed critical production backend bugs",
+      "Developed and optimized RESTful APIs for performance and scalability",
+      "Contributed to stability and reliability of backend systems",
     ],
   },
 ];
@@ -162,7 +167,14 @@ export const skills = {
   frontend: ["React.js", "Angular"],
   data: ["PostgreSQL", "MongoDB", "MySQL", "Elasticsearch"],
   cloud: ["AWS SQS", "AWS S3", "Docker", "Git"],
-  practices: ["System design", "REST APIs", "JWT auth", "Agile"],
+  practices: [
+    "System design",
+    "REST APIs",
+    "JWT auth",
+    "Agile development",
+    "Team collaboration",
+    "Problem-solving",
+  ],
 };
 
 export const certifications = [

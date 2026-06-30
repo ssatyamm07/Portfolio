@@ -18,12 +18,12 @@ const projectData = [
     projectName: "Saras",
     roleLine: "Freelance · E-commerce (sprsaras.com)",
     description:
-      "Commerce experience for products and services: catalog, offers, filters, and flows tuned for mobile — integrated with the team’s backend and ops.",
+      "Backend for a team e-commerce platform: PostgreSQL schemas for products, orders, and users; REST APIs for core business logic; integrated with frontend and ops.",
     demo: "https://sprsaras.com/",
     demoOnDemand: true,
     imgsrc: "/previews/sprsaras-card.png",
     previewObjectPosition: "50% 50%",
-    tags: ["React", "E-commerce", "Mobile UI"],
+    tags: ["Node.js", "PostgreSQL", "REST APIs", "E-commerce"],
     featuredHome: true,
   },
   {
